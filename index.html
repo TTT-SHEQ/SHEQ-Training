@@ -1,23 +1,256 @@
-// --- ตั้งค่าระบบและช่วงวันอบรม ---
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจองอบรมความปลอดภัยเพื่อออกบัตรผ่านเข้าพื้นที่โรงงาน</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printablePass, #printablePass * { visibility: visible; }
+      #printablePass { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- Header -->
+  <header class="bg-slate-900 text-white border-b-4 border-amber-500 shadow-md">
+    <div class="max-w-5xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-amber-500 text-slate-950 p-2.5 rounded-lg shadow-inner">
+          <i data-lucide="shield-alert" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white">ระบบจองอบรมทบทวนประจำปี & ทำบัตรผ่านเข้าพื้นที่</h1>
+          <p class="text-xs text-slate-300">Safety Induction & Work Badge Issuance Appointment</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700 text-xs text-emerald-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        เปิดรับจอง: อังคาร, พุธ, ศุกร์ (14:00 - 17:00 น.)
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
+    
+    <!-- Banner เงื่อนไขและระเบียบการ -->
+    <div class="bg-white rounded-xl p-5 border-l-4 border-amber-500 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <div class="space-y-1">
+        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+          <i data-lucide="info" class="w-5 h-5 text-amber-500"></i>
+          ข้อกำหนดการเข้าอบรมและทำบัตรผ่าน (ช่วง 1 พ.ย. 69 - 31 ม.ค. 70)
+        </h2>
+        <ul class="text-xs text-slate-600 list-disc list-inside space-y-0.5">
+          <li>จำกัดผู้เข้าอบรมรอบละ <strong>30 คนเท่านั้น</strong> เพื่อความปลอดภัยและสุขอนามัย</li>
+          <li>เปิดรอบอบรมเฉพาะ <strong>วันอังคาร, พุธ และศุกร์ เวลา 14:00 - 17:00 น.</strong> (รายงานตัว 13:45 น.)</li>
+          <li>โปรดเตรียมเอกสารตัวจริงมาแสดงที่เคาน์เตอร์ความปลอดภัยในวันอบรมด้วย</li>
+        </ul>
+      </div>
+      <button onclick="refreshSeats()" class="no-print inline-flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition-colors border border-slate-300">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i> อัปเดตที่นั่งว่าง
+      </button>
+    </div>
+
+    <!-- ส่วนที่ 1: เลือกรอบวันอบรม -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">1</span>
+          เลือกรอบวันที่ต้องการเข้าอบรม (30 ที่นั่ง/วัน)
+        </h3>
+        <span class="text-xs text-slate-500" id="seatStatusText">กำลังดึงข้อมูลที่นั่ง...</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="sessionsContainer">
+        <!-- รายการรอบอบรมจะถูกแสดงผลด้วย JavaScript -->
+      </div>
+    </section>
+
+    <!-- ส่วนที่ 2: แบบฟอร์มลงทะเบียนและแนบไฟล์ -->
+    <section id="formSection" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+          <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">2</span>
+          กรอกข้อมูลผู้สมัครและแนบเอกสาร
+        </h3>
+        <span id="selectedDateBadge" class="hidden text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200">
+          ยังไม่ได้เลือกรอบ
+        </span>
+      </div>
+
+      <form id="bookingForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-6">
+        <input type="hidden" id="selectedSessionDate" required>
+
+        <!-- ข้อมูลส่วนตัว -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ชื่อ-นามสกุล <span class="text-rose-500">*</span></label>
+            <input type="text" id="fullName" required placeholder="นายสมชาย ปลอดภัยดี" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">เลขประจำตัวประชาชน / Passport <span class="text-rose-500">*</span></label>
+            <input type="text" id="idCard" required maxlength="13" placeholder="1100000000000" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">เบอร์โทรศัพท์ <span class="text-rose-500">*</span></label>
+            <input type="tel" id="phone" required placeholder="0812345678" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ชื่อบริษัท / ผู้รับเหมา <span class="text-rose-500">*</span></label>
+            <input type="text" id="company" required placeholder="บจก. เอ็นจิเนียริ่ง แอนด์ เซอร์วิส" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+        </div>
+
+        <hr class="border-slate-200">
+
+        <!-- เอกสารแนบ 5 รายการ -->
+        <div>
+          <h4 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+            <i data-lucide="paperclip" class="w-4 h-4 text-slate-500"></i>
+            แนบเอกสารประกอบ (รองรับ .pdf, .jpg, .png ขนาดไม่เกิน 5MB ต่อไฟล์)
+          </h4>
+          <p class="text-xs text-slate-500 mb-4">ข้อมูลจะถูกส่งขึ้น Google Drive และจัดเก็บเป็นลิงก์สำรองในระบบ Google Sheets โดยตรง</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- 1. ใบคำร้องขอบัตรผ่านบุคคล -->
+            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                1. ใบคำร้องขอบัตรผ่านบุคคล <span class="text-rose-500">*</span>
+              </label>
+              <input type="file" id="filePassForm" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+            </div>
+
+            <!-- 2. รูปถ่ายหน้าตรง (สำหรับทำบัตร) -->
+            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                2. รูปถ่ายหน้าตรง (พื้นหลังสุภาพ) <span class="text-rose-500">*</span>
+              </label>
+              <input type="file" id="filePhoto" required accept="image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-900 hover:file:bg-amber-200 cursor-pointer">
+            </div>
+
+            <!-- 3. สำเนาบัตรประชาชน -->
+            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                3. สำเนาบัตรประชาชน (เซ็นรับรองสำเนา) <span class="text-rose-500">*</span>
+              </label>
+              <input type="file" id="fileIdCard" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+            </div>
+
+            <!-- 4. เอกสารประกันสังคม -->
+            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                4. เอกสารประกันสังคม (สปส. 1-03 / e-Service) <span class="text-rose-500">*</span>
+              </label>
+              <input type="file" id="fileSocialSec" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+            </div>
+
+            <!-- 5. ใบรับรองแพทย์ -->
+            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 hover:bg-slate-50 transition-colors md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                5. ใบรับรองแพทย์ตรวจสุขภาพ (Fit to Work ไม่เกิน 6 เดือน) <span class="text-rose-500">*</span>
+              </label>
+              <input type="file" id="fileMedical" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            <span id="btnText">ยืนยันการจองอบรมและส่งเอกสาร</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ใบแสดงผลการจอง (Pass Slip) แสดงเมื่อทำการจองเสร็จสิ้น -->
+    <div id="successModal" class="hidden bg-white rounded-2xl shadow-xl border border-slate-200 p-6 md:p-8">
+      <div id="printablePass" class="border-2 border-dashed border-slate-300 rounded-2xl p-6 bg-slate-50">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <div class="bg-emerald-600 text-white p-2 rounded-lg">
+              <i data-lucide="shield-check" class="w-8 h-8"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">ใบนัดหมายอบรมความปลอดภัย & ทำบัตรผ่าน</h2>
+              <p class="text-xs text-slate-500">Work Badge Induction Appointment Slip</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-500">รหัสการจอง</span>
+            <p class="font-mono text-base font-extrabold text-amber-600" id="passBookingId">-</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          <div class="space-y-1">
+            <span class="text-xs text-slate-400">ผู้เข้ารับการอบรม:</span>
+            <p class="text-sm font-bold text-slate-800" id="passName">-</p>
+            <p class="text-xs text-slate-600">เลขบัตร ปชช.: <span id="passIdCard">-</span></p>
+            <p class="text-xs text-slate-600">บริษัท: <span id="passCompany">-</span></p>
+          </div>
+          <div class="space-y-1">
+            <span class="text-xs text-slate-400">วันและเวลานัดหมาย:</span>
+            <p class="text-sm font-bold text-emerald-700" id="passDate">-</p>
+            <p class="text-xs text-slate-700">เวลา: <strong>14:00 - 17:00 น.</strong> (เข้าห้องอบรม 13:45 น.)</p>
+            <p class="text-xs text-slate-500">สถานที่: ห้องฝึกอบรม Safety Hall ชั้น 2 อาคารอำนวยการ</p>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900 flex items-start gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+          <div>
+            <strong>ข้อปฏิบัติในวันอบรม:</strong> สวมชุดปฏิบัติงานเรียบร้อย กางเกงขายาว รองเท้าเซฟตี้ และนำบัตรประจำตัวประชาชนตัวจริงมาแสดงต่อเจ้าหน้าที่
+          </div>
+        </div>
+      </div>
+
+      <div class="no-print mt-6 flex flex-col sm:flex-row gap-3 justify-end">
+        <button onclick="window.print()" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 px-5 rounded-lg text-sm transition-colors">
+          <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์ / บันทึก PDF ใบนัดหมาย
+        </button>
+        <button onclick="resetPage()" class="inline-flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium py-2.5 px-5 rounded-lg text-sm transition-colors">
+          ทำการจองรายการอื่นต่อ
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-center no-print">
+    <p>© 2026 ฝ่ายความปลอดภัย อาชีวอนามัย และสิ่งแวดล้อม (EHS Department) — ระบบอัตโนมัติเชื่อมต่อ Google Workspace</p>
+  </footer>
+
+  <!-- Script การทำงานของระบบ -->
+  <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCj-ZNfFyViOf5pdBkHyQ7C2EpfD_R1dDWPaGEL60fgkzkQAdAI0Z8vElvZaGCX-5v/exec";
     const MAX_SEATS_PER_DAY = 30;
 
-    // กำหนดช่วงเวลา: 1 พ.ย. 2569 - 31 ม.ค. 2570 (ค.ศ. 2026 - 2027)
+    // กำหนดช่วงเวลา: 1 พ.ย. 2569 - 31 ม.ค. 2570
     const START_DATE = new Date("2026-11-01T00:00:00");
     const END_DATE   = new Date("2027-01-31T23:59:59");
 
-    let allAvailableSessions = []; // เก็บทุกรอบที่เป็น อังคาร, พุธ, ศุกร์ ในช่วงเวลา
-    let visibleCount = 6;          // แสดงเริ่มต้น 6 วันแรก
+    let allAvailableSessions = [];
+    let visibleCount = 6;
     let bookedCounts = {};
 
-    // คำนวณรอบวันทั้งหมดในช่วง 1 พ.ย. 69 - 31 ม.ค. 70 (เฉพาะ อังคาร=2, พุธ=3, ศุกร์=5)
     function generateFixedRangeSessions() {
       const dates = [];
       let current = new Date(START_DATE);
 
       while (current <= END_DATE) {
         const day = current.getDay();
-        if (day === 2 || day === 3 || day === 5) {
+        if (day === 2 || day === 3 || day === 5) { // อังคาร=2, พุธ=3, ศุกร์=5
           const yyyy = current.getFullYear();
           const mm = String(current.getMonth() + 1).padStart(2, '0');
           const dd = String(current.getDate()).padStart(2, '0');
@@ -37,7 +270,6 @@
       return dates;
     }
 
-    // ดึงจำนวนยอดจองล่าสุดจาก Google Sheets (doGet)
     async function fetchBookings() {
       const statusText = document.getElementById("seatStatusText");
       const icon = document.getElementById("refreshIcon");
@@ -52,7 +284,7 @@
         }
         if (statusText) statusText.innerText = "ข้อมูลที่นั่งเป็นปัจจุบัน";
       } catch (err) {
-        console.warn("ใช้ยอดเริ่มต้นเนื่องจากดึงข้อมูลไม่สำเร็จ:", err);
+        console.warn("ดึงยอดที่นั่งไม่สำเร็จ:", err);
         if (statusText) statusText.innerText = "แสดงผลรอบเปิดรับจอง";
       } finally {
         if (icon) icon.classList.remove("animate-spin");
@@ -60,13 +292,11 @@
       }
     }
 
-    // เรนเดอร์การ์ดแสดงผลรอบวันอบรม
     function renderSessions() {
       const container = document.getElementById("sessionsContainer");
       if (!container) return;
       container.innerHTML = "";
 
-      // ตัดแสดงผลตามจำนวน visibleCount (เริ่มที่ 6 วัน)
       const currentSessions = allAvailableSessions.slice(0, visibleCount);
 
       currentSessions.forEach((session) => {
@@ -105,7 +335,6 @@
             <i data-lucide="clock" class="w-3.5 h-3.5"></i> 14:00 - 17:00 น.
           </div>
 
-          <!-- Progress Bar โควตา 30 คน -->
           <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
             <div class="${isFull ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-emerald-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
           </div>
@@ -122,7 +351,6 @@
         container.appendChild(card);
       });
 
-      // จัดการปุ่ม "โหลดรอบวันอบรมเพิ่มเติม"
       let loadMoreBtn = document.getElementById("btnLoadMore");
       if (!loadMoreBtn) {
         const btnWrapper = document.createElement("div");
@@ -136,27 +364,20 @@
         loadMoreBtn = document.getElementById("btnLoadMore");
       }
 
-      // ซ่อนปุ่มเมื่อแสดงครบทุกวันจนถึง 31 ม.ค. 70 แล้ว
       if (visibleCount >= allAvailableSessions.length) {
-        if (loadMoreBtn && loadMoreBtn.parentElement) {
-          loadMoreBtn.parentElement.style.display = "none";
-        }
+        if (loadMoreBtn && loadMoreBtn.parentElement) loadMoreBtn.parentElement.style.display = "none";
       } else {
-        if (loadMoreBtn && loadMoreBtn.parentElement) {
-          loadMoreBtn.parentElement.style.display = "flex";
-        }
+        if (loadMoreBtn && loadMoreBtn.parentElement) loadMoreBtn.parentElement.style.display = "flex";
       }
 
       lucide.createIcons();
     }
 
-    // ฟังก์ชันกดเพิ่มรอบวันทีละ 6 วัน
     function loadMoreSessions() {
       visibleCount += 6;
       renderSessions();
     }
 
-    // ฟังก์ชันเลือกรอบวันอบรม
     function selectSession(session) {
       document.getElementById("selectedSessionDate").value = session.dateStr;
       
@@ -178,7 +399,6 @@
       document.getElementById("formSection").scrollIntoView({ behavior: 'smooth' });
     }
 
-    // แปลงไฟล์เป็น Base64
     function fileToBase64(file) {
       return new Promise((resolve) => {
         if (!file) {
@@ -195,7 +415,6 @@
       });
     }
 
-    // บันทึกและส่งข้อมูล
     async function handleFormSubmit(e) {
       e.preventDefault();
 
@@ -275,10 +494,12 @@
       window.location.reload();
     }
 
-    // เริ่มต้นระบบเมื่อเปิดหน้าเว็บ
     window.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       allAvailableSessions = generateFixedRangeSessions();
       renderSessions();
       fetchBookings();
     });
+  </script>
+</body>
+</html>
