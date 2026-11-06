@@ -1,1 +1,177 @@
+// 1. ระบุ Folder ID สำหรับแต่ละหลักสูตรใน Google Drive
+var FOLDER_MAPPING = {
+  "refresher": "15j8DZL7t-HdFd6tqkZw-rACVXoJE5NWl",
+  "contractor-new": "1Q6j4oMhDnjGeuGOYthtmHMJIsd26NWsq",
+  "e-ptw": "1ahWOyWxDGWO4oYoy4G91yjGbvngFbqD4",
+  "safety-officer": "1R3O_nO6Jhixnd5tlCFI8qcMsB63zqXcE"
+};
 
+// 2. แผนผังชื่อแท็บใน Google Sheet
+var SHEET_MAPPING = {
+  "refresher": "Refresher Training",
+  "contractor-new": "contractor-new",
+  "e-ptw": "e-ptw",
+  "safety-officer": "safety-officer"
+};
+
+function testPermissions() {
+  DriveApp.getRootFolder();
+  SpreadsheetApp.getActiveSpreadsheet();
+  Logger.log("Permissions granted successfully!");
+}
+
+function doPost(e) {
+  try {
+    if (!e || !e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: "error", 
+        message: "No data received" 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var targetSheetName = SHEET_MAPPING[data.courseType] || "safety-officer";
+    var sheet = ss.getSheetByName(targetSheetName) || ss.getSheets()[0];
+    var folderId = FOLDER_MAPPING[data.courseType] || FOLDER_MAPPING["safety-officer"];
+
+    function saveFile(fileData, prefix) {
+      if (!fileData || !fileData.base64) return "-";
+      try {
+        var folder = DriveApp.getFolderById(folderId);
+        var contentType = fileData.type || "application/octet-stream";
+        var decodedBytes = Utilities.base64Decode(fileData.base64.split(",")[1] || fileData.base64);
+        var idIdentifier = data.fullName || "USER";
+        var fileName = prefix + "_" + idIdentifier + "_" + fileData.name;
+        var blob = Utilities.newBlob(decodedBytes, contentType, fileName);
+        var file = folder.createFile(blob);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        return file.getUrl();
+      } catch (err) {
+        return "Upload Error: " + err.toString();
+      }
+    }
+
+    // 1. สำหรับ Safety Officer
+    if (data.courseType === "safety-officer") {
+      var appointLink = saveFile(data.docAppoint, "AppointDoc");
+      var regisLink = saveFile(data.docRegis, "RegisDoc");
+      var certLink = saveFile(data.docCert, "CertDoc");
+
+      sheet.appendRow([
+        new Date(),                 // A: Timestamp
+        data.bookingId,             // B: Booking ID
+        data.fullName,              // C: ชื่อ-นามสกุล
+        data.company,               // D: บริษัทสังกัด
+        "'" + data.sessionDate,     // E: วันที่ขอสอบขึ้นทะเบียน
+        appointLink,                // F: ลิงก์หนังสือแต่งตั้ง จป.
+        regisLink,                  // G: ลิงก์เอกสารแสดงเลขทะเบียน จป.
+        certLink                    // H: ลิงก์ใบรับรองอบรม จป.
+      ]);
+    }
+    // 2. สำหรับ Contractor New
+    else if (data.courseType === "contractor-new") {
+      var cPassForm = saveFile(data.docPassForm, "PassForm");
+      var cPhoto = saveFile(data.docPhoto, "Photo");
+      var cIdCard = saveFile(data.docIdCard, "IDCard");
+      var cSocialSec = saveFile(data.docSocialSec, "SocialSec");
+      var cCert6H = saveFile(data.docCert6H, "Cert6H");
+      var cMedical = saveFile(data.docMedical, "MedicalDriver");
+
+      sheet.appendRow([
+        new Date(), data.bookingId, data.fullName, "'" + data.idCard, "'" + data.phone,
+        data.company, "'" + data.sessionDate, cPassForm, cPhoto, cIdCard, cSocialSec, cCert6H, cMedical
+      ]);
+    } 
+    // 3. สำหรับ Refresher
+    else if (data.courseType === "refresher") {
+      var rPassForm = saveFile(data.docPassForm, "PassForm");
+      var rPhoto = saveFile(data.docPhoto, "Photo");
+      var rMedical = saveFile(data.docMedical, "Medical");
+
+      sheet.appendRow([
+        new Date(), data.bookingId, data.fullName, "'" + data.idCard, "'" + data.phone,
+        data.company, "'" + data.sessionDate, data.sessionTime || "-", rPassForm, rPhoto, rMedical
+      ]);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      bookingId: data.bookingId
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var courseParam = (e && e.parameter && e.parameter.course) ? e.parameter.course : "safety-officer";
+    var targetSheetName = SHEET_MAPPING[courseParam] || "safety-officer";
+    var sheet = ss.getSheetByName(targetSheetName);
+
+    if (!sheet) {
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: "error", 
+        message: "Sheet not found: " + targetSheetName 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var displayData = sheet.getDataRange().getDisplayValues();
+    var bookingCounts = {};
+    
+    // กำหนดคอลัมน์วันที่จองตามประเภทหลักสูตร
+    // Safety Officer วันที่อยู่ใน คอลัมน์ E (Index 4)
+    // หลักสูตรอื่น วันที่อยู่ใน คอลัมน์ G (Index 6)
+    var dateColIndex = (courseParam === "safety-officer") ? 4 : 6;
+
+    for (var i = 1; i < displayData.length; i++) {
+      var cellText = String(displayData[i][dateColIndex] || "").trim();
+      if (!cellText) continue;
+
+      var dateKey = "";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(cellText)) {
+        dateKey = cellText;
+      } else if (cellText.indexOf("/") > -1) {
+        var parts = cellText.split("/");
+        if (parts.length === 3) {
+          var d = parts[0].padStart(2, '0');
+          var m = parts[1].padStart(2, '0');
+          var y = parts[2];
+          if (parseInt(y) > 2500) y = String(parseInt(y) - 543);
+          dateKey = y + "-" + m + "-" + d;
+        }
+      } else {
+        var parsed = new Date(cellText);
+        if (!isNaN(parsed.getTime())) {
+          var yyyy = parsed.getFullYear();
+          if (yyyy > 2500) yyyy -= 543;
+          var mm = String(parsed.getMonth() + 1).padStart(2, '0');
+          var dd = String(parsed.getDate()).padStart(2, '0');
+          dateKey = yyyy + "-" + mm + "-" + dd;
+        }
+      }
+
+      if (dateKey) {
+        bookingCounts[dateKey] = (bookingCounts[dateKey] || 0) + 1;
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      course: courseParam,
+      counts: bookingCounts
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
