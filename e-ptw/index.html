@@ -1,1 +1,511 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>อบรมระบบใบอนุญาตทำงานอิเล็กทรอนิกส์ (E-PTW) - SHEQ Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+      html, body {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+      }
+      header, footer, #alertBanner, #formSection, #sessionsSection, .no-print {
+        display: none !important;
+      }
+      #successModal {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+      }
+      #printablePass {
+        border: 2px dashed #94a3b8 !important;
+        box-shadow: none !important;
+        padding: 24px !important;
+        background-color: #f8fafc !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
 
+  <!-- Header -->
+  <header class="bg-slate-900 text-white border-b-4 border-purple-500 shadow-md">
+    <div class="max-w-5xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <a href="/SHEQ-Training/" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors mr-1" title="กลับหน้าแรก">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <div class="bg-purple-600 text-white p-2.5 rounded-lg shadow-inner">
+          <i data-lucide="file-check-2" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white">อบรมระบบใบอนุญาตทำงานอิเล็กทรอนิกส์ (E-PTW)</h1>
+          <p class="text-xs text-slate-300">Electronic Permit to Work Training - บริษัท ไทยแท้งค์ เทอร์มินัล จำกัด</p>
+        </div>
+      </div>
+      <a href="/SHEQ-Training/" class="text-xs text-purple-300 hover:text-white flex items-center gap-1.5 border border-slate-700 px-3.5 py-1.5 rounded-full bg-slate-800/80 transition-colors">
+        <i data-lucide="home" class="w-3.5 h-3.5"></i> กลับไปหน้าหลัก Home
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
+    
+    <!-- Banner ข้อกำหนด -->
+    <div id="alertBanner" class="bg-white rounded-xl p-5 border-l-4 border-purple-500 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <div class="space-y-1">
+        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+          <i data-lucide="info" class="w-5 h-5 text-purple-600"></i>
+          ข้อกำหนดการเข้าอบรมหลักสูตร E-PTW
+        </h2>
+        <ul class="text-xs text-slate-600 list-disc list-inside space-y-0.5">
+          <li>เปิดรอบอบรมเฉพาะ <strong>วันจันทร์ เวลา 09.00 น. - 12.00 น. (3 ชั่วโมง)</strong></li>
+          <li>จำกัดผู้เข้าอบรมรอบละ <strong>ไม่เกิน 20 คน/วัน</strong></li>
+          <li>เอกสารแนบต้องเป็นไฟล์ <strong>PDF หรือ รูปภาพ</strong> เท่านั้น (ขนาดไม่เกิน 5MB)</li>
+        </ul>
+      </div>
+      <button onclick="refreshSeats()" class="no-print inline-flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition-colors border border-slate-300">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i> อัปเดตที่นั่งว่าง
+      </button>
+    </div>
+
+    <!-- ส่วนที่ 1: เลือกรอบวันอบรม (เฉพาะวันจันทร์) -->
+    <section id="sessionsSection">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">1</span>
+            วันที่ต้องการเข้าอบรม (รับไม่เกิน 20 คน/วัน)
+          </h3>
+          <span class="text-xs text-slate-500" id="seatStatusText">กำลังตรวจสอบที่นั่ง...</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="monthFilter" class="text-xs font-semibold text-slate-700 whitespace-nowrap">เลือกเดือน:</label>
+          <div class="relative">
+            <select id="monthFilter" onchange="onMonthChange()" class="appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 pr-8 text-xs font-bold text-slate-800 shadow-sm focus:ring-2 focus:ring-purple-500 focus:outline-none cursor-pointer">
+            </select>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="sessionsContainer"></div>
+    </section>
+
+    <!-- ส่วนที่ 2: ฟอร์มข้อมูลและแนบเอกสาร -->
+    <section id="formSection" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+          <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">2</span>
+          ข้อมูลผู้สมัครและแนบเอกสาร
+        </h3>
+        <span id="selectedDateBadge" class="hidden text-xs font-semibold bg-purple-100 text-purple-800 px-3 py-1 rounded-full border border-purple-200">
+          ยังไม่ได้เลือกรอบ
+        </span>
+      </div>
+
+      <form id="bookingForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-6">
+        <input type="hidden" id="selectedSessionDate" required>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ชื่อ-นามสกุล <span class="text-rose-500">*</span></label>
+            <input type="text" id="fullName" required placeholder="นายเซฟตี้ ความปลอดภัย" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">บริษัท <span class="text-rose-500">*</span></label>
+            <input type="text" id="company" required placeholder="ระบุชื่อบริษัท" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ตำแหน่ง <span class="text-rose-500">*</span></label>
+            <input type="text" id="position" required placeholder="ระบุตำแหน่งงาน" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+        </div>
+
+        <hr class="border-slate-200">
+
+        <!-- เอกสารแนบ -->
+        <div>
+          <h4 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+            <i data-lucide="paperclip" class="w-4 h-4 text-slate-500"></i>
+            แนบไฟล์เอกสารหลักฐาน (PDF หรือ รูปภาพเท่านั้น ขนาดไม่เกิน 5MB)
+          </h4>
+          <p class="text-xs text-slate-500 mb-4">ไฟล์จะถูกจัดเก็บลง Google Drive โฟลเดอร์ E-PTW โดยตรง</p>
+
+          <div class="max-w-xl">
+            <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <label class="block text-xs font-semibold text-slate-800 mb-1">
+                บัตรพนักงานที่ออกโดยบริษัท ไทยแท้งค์ฯ <span class="text-rose-500">*</span>
+              </label>
+              <p class="text-[11px] text-slate-500 mb-2">ภาพถ่ายบัตรผ่านหรือบัตรประจำตัวพนักงาน TTT</p>
+              <input type="file" id="fileTttCard" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" id="submitBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            <span id="btnText">ยืนยันการจองอบรม E-PTW และส่งเอกสาร</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ใบนัดหมายเมื่อจองสำเร็จ -->
+    <div id="successModal" class="hidden space-y-6">
+      
+      <div class="no-print bg-emerald-500 text-white rounded-xl p-4 shadow-md flex items-center gap-3">
+        <div class="bg-white/20 p-2 rounded-lg">
+          <i data-lucide="check-circle" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-base">ยืนยันการจองอบรมสำเร็จเรียบร้อยแล้ว!</h3>
+          <p class="text-xs text-emerald-100">ข้อมูลของคุณถูกบันทึกเข้าระบบแล้ว โปรดบันทึกภาพหรือพิมพ์ใบนัดหมายด้านล่างนี้</p>
+        </div>
+      </div>
+
+      <div id="printablePass" class="border-2 border-dashed border-slate-300 rounded-2xl p-6 bg-slate-50 shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <div class="bg-purple-600 text-white p-2 rounded-lg">
+              <i data-lucide="file-check-2" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">ใบนัดหมายอบรมระบบใบอนุญาตทำงาน (E-PTW)</h2>
+              <p class="text-xs text-slate-500">บริษัท ไทยแท้งค์ เทอร์มินัล จำกัด (Thai Tank Terminal Ltd.)</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-500">รหัสการจอง</span>
+            <p class="font-mono text-base font-extrabold text-purple-600" id="passBookingId">-</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
+          <div class="space-y-1">
+            <span class="text-xs text-slate-400">ผู้เข้ารับการอบรม:</span>
+            <p class="text-sm font-bold text-slate-800" id="passName">-</p>
+            <p class="text-xs text-slate-600">บริษัท: <span id="passCompany">-</span></p>
+            <p class="text-xs text-slate-600">ตำแหน่ง: <span id="passPosition">-</span></p>
+          </div>
+          <div class="space-y-1">
+            <span class="text-xs text-slate-400">วันและเวลานัดหมาย:</span>
+            <p class="text-sm font-bold text-purple-700" id="passDate">-</p>
+            <p class="text-xs text-slate-700">เวลา: <strong>09.00 น. - 12.00 น.</strong> (ลงทะเบียน 08.45 น.)</p>
+            <p class="text-xs text-slate-700 font-semibold">สถานที่: ห้อง Training TTT</p>
+          </div>
+        </div>
+
+        <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-xs text-purple-900 flex items-start gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0"></i>
+          <div>
+            <strong>ข้อปฏิบัติ:</strong> โปรดแต่งกายสุภาพ สวมรองเท้าเซฟตี้ นำบัตรพนักงาน TTT ฉบับจริงมาแสดงต่อเจ้าหน้าที่ก่อนเวลาอบรม 15 นาที
+          </div>
+        </div>
+      </div>
+
+      <div class="no-print flex flex-col sm:flex-row gap-3 justify-end">
+        <button onclick="window.print()" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 px-5 rounded-lg text-sm transition-colors shadow">
+          <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์ / บันทึก PDF ใบนัดหมาย
+        </button>
+        <a href="/SHEQ-Training/" class="inline-flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium py-2.5 px-5 rounded-lg text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i> กลับไปหน้าหลัก Home
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-center no-print">
+    <p>© 2026 ฝ่ายความปลอดภัย อาชีวอนามัย และสิ่งแวดล้อม (SHEQ Department) - บริษัท ไทยแท้งค์ เทอร์มินัล จำกัด</p>
+  </footer>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCj-ZNfFyViOf5pdBkHyQ7C2EpfD_R1dDWPaGEL60fgkzkQAdAI0Z8vElvZaGCX-5v/exec";
+    const MAX_SEATS_PER_DAY = 20;
+
+    let bookedCounts = {};
+    let selectedYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth();
+
+    const thaiMonths = [
+      "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+      "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
+
+    function formatThaiFullDate(dateStr) {
+      if (!dateStr) return "-";
+      var parts = dateStr.split("-");
+      var year = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10) - 1;
+      var day = parseInt(parts[2], 10);
+      var d = new Date(year, month, day);
+      return d.toLocaleDateString("th-TH", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function initMonthSelector() {
+      const select = document.getElementById("monthFilter");
+      select.innerHTML = "";
+
+      const today = new Date();
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+        const y = d.getFullYear();
+        const m = d.getMonth();
+        const option = document.createElement("option");
+        option.value = `${y}-${m}`;
+        option.innerText = `${thaiMonths[m]} ${y + 543}`;
+        if (i === 0) option.selected = true;
+        select.appendChild(option);
+      }
+    }
+
+    function onMonthChange() {
+      const val = document.getElementById("monthFilter").value.split("-");
+      selectedYear = parseInt(val[0]);
+      selectedMonth = parseInt(val[1]);
+      renderSessions();
+    }
+
+    // รอบเปิดเฉพาะวันจันทร์ (1)
+    function getSessionsForMonth(year, month) {
+      const dates = [];
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const current = new Date(year, month, day);
+        const dayOfWeek = current.getDay();
+
+        if (dayOfWeek === 1) { // เฉพาะวันจันทร์ = 1
+          const yyyy = current.getFullYear();
+          const mm = String(current.getMonth() + 1).padStart(2, '0');
+          const dd = String(current.getDate()).padStart(2, '0');
+          const dateStr = `${yyyy}-${mm}-${dd}`;
+
+          const thaiDate = current.toLocaleDateString('th-TH', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+
+          const isPast = current < today;
+          dates.push({ dateStr, thaiDate, dayOfWeek, isPast });
+        }
+      }
+      return dates;
+    }
+
+    async function fetchBookings() {
+      const statusText = document.getElementById("seatStatusText");
+      const icon = document.getElementById("refreshIcon");
+      if (icon) icon.classList.add("animate-spin");
+
+      try {
+        const response = await fetch(`${SCRIPT_URL}?course=e-ptw`);
+        const result = await response.json();
+        if (result && result.counts) bookedCounts = result.counts;
+        if (statusText) statusText.innerText = "ข้อมูลที่นั่งเป็นปัจจุบัน";
+      } catch (err) {
+        if (statusText) statusText.innerText = "แสดงผลรอบเปิดรับจอง";
+      } finally {
+        if (icon) icon.classList.remove("animate-spin");
+        renderSessions();
+      }
+    }
+
+    function renderSessions() {
+      const container = document.getElementById("sessionsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const sessions = getSessionsForMonth(selectedYear, selectedMonth);
+
+      if (sessions.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-8 text-xs text-slate-400">ไม่มีรอบอบรมในเดือนนี้</div>`;
+        return;
+      }
+
+      sessions.forEach((session) => {
+        const booked = bookedCounts[session.dateStr] || 0;
+        const remaining = Math.max(0, MAX_SEATS_PER_DAY - booked);
+        const isFull = remaining <= 0;
+        const isDisabled = isFull || session.isPast;
+        const percent = Math.min(100, (booked / MAX_SEATS_PER_DAY) * 100);
+
+        const card = document.createElement("div");
+        card.className = `p-4 rounded-xl border transition-all relative ${
+          isDisabled
+            ? 'bg-slate-100 border-slate-300 opacity-60 cursor-not-allowed'
+            : 'bg-white border-slate-200 hover:border-purple-500 hover:shadow-md cursor-pointer'
+        }`;
+        card.id = `card-${session.dateStr}`;
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-purple-100 text-purple-800">
+                วันจันทร์
+              </span>
+              <p class="font-bold text-sm text-slate-800 mt-1">${session.thaiDate}</p>
+            </div>
+            <span class="text-xs font-bold px-2 py-1 rounded ${
+              session.isPast ? 'bg-slate-200 text-slate-600' :
+              isFull ? 'bg-rose-100 text-rose-700' : 'bg-purple-50 text-purple-700'
+            }">
+              ${session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
+            </span>
+          </div>
+
+          <div class="text-xs text-slate-500 mb-3 flex items-center gap-1">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i> 09.00 น. - 12.00 น.
+          </div>
+
+          <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+            <div class="${isFull ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-purple-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+            <span>ลงทะเบียนแล้ว ${booked} คน</span>
+            <span>จำกัด ${MAX_SEATS_PER_DAY} คน</span>
+          </div>
+        `;
+
+        if (!isDisabled) {
+          card.onclick = () => selectSession(session);
+        }
+
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function selectSession(session) {
+      document.getElementById("selectedSessionDate").value = session.dateStr;
+      
+      const badge = document.getElementById("selectedDateBadge");
+      badge.classList.remove("hidden");
+      badge.innerText = `รอบที่เลือก: ${session.thaiDate}`;
+
+      const cards = document.querySelectorAll("#sessionsContainer > div");
+      cards.forEach(c => c.classList.remove("ring-2", "ring-purple-500", "bg-purple-50/40"));
+
+      const activeCard = document.getElementById(`card-${session.dateStr}`);
+      if (activeCard) {
+        activeCard.classList.add("ring-2", "ring-purple-500", "bg-purple-50/40");
+      }
+
+      document.getElementById("formSection").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+          name: file.name,
+          type: file.type,
+          base64: reader.result
+        });
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const selectedDate = document.getElementById("selectedSessionDate").value;
+      if (!selectedDate) {
+        alert("กรุณาคลิกเลือกรอบวันที่ต้องการเข้าอบรมก่อนครับ");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      const btnText = document.getElementById("btnText");
+      submitBtn.disabled = true;
+      btnText.innerText = "กำลังบันทึกข้อมูลและอัปโหลดไฟล์...";
+
+      try {
+        const fileTttCard = document.getElementById("fileTttCard").files[0];
+        const docTttCard = await fileToBase64(fileTttCard);
+
+        const bookingId = "PTW-" + Math.floor(100000 + Math.random() * 900000);
+        const payload = {
+          courseType: "e-ptw",
+          bookingId: bookingId,
+          fullName: document.getElementById("fullName").value.trim(),
+          company: document.getElementById("company").value.trim(),
+          position: document.getElementById("position").value.trim(),
+          sessionDate: selectedDate,
+          docTttCard: docTttCard
+        };
+
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(payload)
+        });
+
+        // กรอกข้อมูลลงใบนัดหมาย
+        document.getElementById("passBookingId").innerText = `#${bookingId}`;
+        document.getElementById("passName").innerText = payload.fullName;
+        document.getElementById("passCompany").innerText = payload.company;
+        document.getElementById("passPosition").innerText = payload.position;
+        document.getElementById("passDate").innerText = formatThaiFullDate(selectedDate);
+
+        document.getElementById("sessionsSection").classList.add("hidden");
+        document.getElementById("formSection").classList.add("hidden");
+        document.getElementById("alertBanner").classList.add("hidden");
+        document.getElementById("successModal").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        fetchBookings();
+
+      } catch (err) {
+        console.error(err);
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง");
+        submitBtn.disabled = false;
+        btnText.innerText = "ยืนยันการจองอบรม E-PTW และส่งเอกสาร";
+      }
+    }
+
+    function refreshSeats() {
+      fetchBookings();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initMonthSelector();
+      renderSessions();
+      fetchBookings();
+    });
+  </script>
+</body>
+</html>
