@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบลงทะเบียนอบรมความปลอดภัย SHEQ Training Portal</title>
+  <title>ระบบลงทะเบียนอบรมความปลอดภัย - SHEQ Training Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
 
   <!-- Header -->
-  <header class="bg-slate-900 text-white border-b-4 border-amber-500 shadow-md">
+  <header class="bg-slate-900 text-white border-b-4 border-blue-600 shadow-md">
     <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-3.5">
-        <div class="bg-amber-500 text-slate-950 p-2.5 rounded-xl shadow">
+      <div class="flex items-center space-x-3">
+        <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-inner">
           <i data-lucide="shield-check" class="w-8 h-8"></i>
         </div>
         <div>
-          <h1 class="text-xl font-bold tracking-tight text-white">SHEQ Safety Training Center</h1>
-          <p class="text-xs text-slate-300">ศูนย์ประสานงานและลงทะเบียนอบรมความปลอดภัยในการทำงาน</p>
+          <h1 class="text-2xl font-bold tracking-tight">SHEQ Training Portal</h1>
+          <p class="text-xs text-slate-300">ระบบลงทะเบียนอบรมและขอรับบัตรผ่านเข้าพื้นที่ปฏิบัติงาน</p>
         </div>
       </div>
-      <div class="bg-slate-800 border border-slate-700 px-3.5 py-1.5 rounded-full text-xs text-emerald-400 flex items-center gap-2">
+      <div class="text-xs bg-slate-800/80 border border-slate-700 px-4 py-2 rounded-full text-slate-300 flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        ระบบเปิดรับจองรอบอบรมออนไลน์
+        ระบบเปิดให้บริการตามรอบที่กำหนด
       </div>
     </div>
   </header>
@@ -32,189 +31,170 @@
   <!-- Main Content -->
   <main class="max-w-6xl mx-auto px-4 py-10 flex-1 w-full space-y-8">
     
-    <!-- กล่องหัวข้อ -->
-    <div class="text-center max-w-2xl mx-auto space-y-2">
-      <h2 class="text-2xl font-extrabold text-slate-900">กรุณาเลือกหลักสูตรที่ต้องการเข้าอบรม / สอบ</h2>
-      <p class="text-sm text-slate-600">เลือกประเภทการอบรมให้ตรงกับข้อกำหนดของท่าน เพื่อเข้าสู่หน้ารายละเอียดและรอบการจอง</p>
+    <!-- Title Section -->
+    <div class="text-center space-y-2 max-w-2xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
+        กรุณาเลือกหลักสูตรที่ต้องการเข้าอบรม / สอบ[cite: 13]
+      </h2>
+      <p class="text-sm text-slate-500">
+        เลือกประเภทการอบรมให้ตรงกับข้อกำหนดของท่าน เพื่อเข้าสู่หน้ารายละเอียดและรอบการจอง[cite: 13]
+      </p>
     </div>
 
-    <!-- กริดแสดง 4 หลักสูตร (2x2 บนคอมพิวเตอร์) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      <!-- 1. ผู้รับเหมาใหม่ -->
-      <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-blue-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-start mb-4">
-            <span class="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-              สำหรับผู้รับเหมาใหม่
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      
+      <!-- Card 1: ผู้รับเหมาใหม่ -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative">
+        <div class="space-y-4">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-800">
+              สำหรับผู้รับเหมาใหม่[cite: 13]
             </span>
-            <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
-              <i data-lucide="user-plus" class="w-6 h-6"></i>
+            <div class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+              <i data-lucide="user-plus" class="w-6 h-6"></i>[cite: 13]
             </div>
           </div>
 
-          <h3 class="text-lg font-bold text-slate-900 mb-2">อบรมความปลอดภัยเบื้องต้นสำหรับผู้รับเหมาใหม่</h3>
-          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-            หลักสูตรพื้นฐานสำหรับพนักงานผู้รับเหมาที่เข้ามาปฏิบัติงานในพื้นที่เป็นครั้งแรก หรือบัตรเดิมหมดอายุเกินกำหนด
-          </p>
-
-          <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
-            <li class="flex items-center gap-2">
-              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
-              <span>ระยะเวลา: <strong>1 วันเต็ม (09:00 - 16:30 น.)</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
-              <span>กลุ่มเป้าหมาย: <strong>ผู้ปฏิบัติงานใหม่ทุกท่าน</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-              <span>เงื่อนไข: <strong>ต้องผ่านก่อนขอรับบัตรเข้าพื้นที่</strong></span>
-            </li>
-          </ul>
-        </div>
-
-        <a href="contractor-new/" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-center text-sm flex items-center justify-center gap-2 shadow transition-colors">
-          <span>เข้าสู่หน้าจอง (ผู้รับเหมาใหม่)</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-      </div>
-
-      <!-- 2. อบรมทบทวนประจำปี & ทำบัตรผ่าน -->
-      <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-amber-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-start mb-4">
-            <span class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-900 rounded-full">
-              ต่ออายุบัตรประจำปี
-            </span>
-            <div class="p-2.5 bg-amber-50 text-amber-600 rounded-xl">
-              <i data-lucide="refresh-cw" class="w-6 h-6"></i>
-            </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">
+              อบรมความปลอดภัยเบื้องต้นสำหรับผู้รับเหมาใหม่[cite: 13]
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              หลักสูตรพื้นฐานสำหรับพนักงานผู้รับเหมาที่เข้ามาปฏิบัติงานในพื้นที่เป็นครั้งแรก หรือบัตรเดิมหมดอายุเกินกำหนด[cite: 13]
+            </p>
           </div>
 
-          <h3 class="text-lg font-bold text-slate-900 mb-2">อบรมทบทวนประจำปี & ทำบัตรผ่านเข้าพื้นที่</h3>
-          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-            สำหรับพนักงานและผู้รับเหมาเดิมที่มีบัตรผ่านอยู่แล้ว และต้องการต่ออายุบัตรประจำปี (รอบละ 30 คน)
-          </p>
+          <hr class="border-slate-100">
 
-          <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
-            <li class="flex items-center gap-2">
+          <div class="space-y-2 text-xs text-slate-600">
+            <div class="flex items-center gap-2">
               <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
-              <span>รอบเปิด: <strong>อังคาร, พุธ, ศุกร์ (14:00 - 17:00 น.)</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
+              <span>รอบเปิด: <strong>ทุกวันอังคาร และ พฤหัสบดี (ตลอดทั้งปี)</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
               <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
-              <span>ระยะเวลาโครงการ: <strong>1 พ.ย. 69 - 31 ม.ค. 70</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="users" class="w-4 h-4 text-amber-600"></i>
-              <span>โควตา: <strong>จำกัด 30 คนต่อวัน</strong></span>
-            </li>
-          </ul>
+              <span>ระยะเวลา: <strong>3 ชั่วโมง (09:00 - 12:00 น.)</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+              <span>โควตา: <strong>จำกัด 25 คนต่อวัน</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>[cite: 13]
+              <span>เงื่อนไข: ต้องผ่านก่อนขอรับบัตรเข้าพื้นที่</span>[cite: 13]
+            </div>
+          </div>
         </div>
 
-        <a href="refresher/" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold py-3 px-4 rounded-xl text-center text-sm flex items-center justify-center gap-2 shadow transition-colors">
-          <span>เข้าสู่หน้าจอง (อบรมทบทวน & ทำบัตร)</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
+        <div class="pt-6">
+          <a href="contractor-new/" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow transition-colors flex items-center justify-center gap-2 text-sm">
+            <span>เข้าสู่หน้าจอง (ผู้รับเหมาใหม่)</span>[cite: 13]
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>[cite: 13]
+          </a>
+        </div>
       </div>
 
-      <!-- 3. สอบขึ้นทะเบียน จป. -->
-      <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-purple-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-start mb-4">
-            <span class="text-xs font-bold px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-              เจ้าหน้าที่ความปลอดภัย
+      <!-- Card 2: อบรมทบทวนประจำปี & ทำบัตรผ่านเข้าพื้นที่ -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative">
+        <div class="space-y-4">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-800" id="refresherStatusBadge">
+              ต่ออายุบัตรประจำปี[cite: 13]
             </span>
-            <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
-              <i data-lucide="award" class="w-6 h-6"></i>
+            <div class="p-2 bg-amber-50 text-amber-600 rounded-xl">
+              <i data-lucide="refresh-cw" class="w-6 h-6"></i>[cite: 13]
             </div>
           </div>
 
-          <h3 class="text-lg font-bold text-slate-900 mb-2">สอบขึ้นทะเบียน จป. (Safety Officer Exam)</h3>
-          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-            จองคิวสอบวัดความรู้เพื่อขึ้นทะเบียน จป.หัวหน้างาน / จป.บริหาร / จป.วิชาชีพ ประจำสถานประกอบการ
-          </p>
-
-          <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
-            <li class="flex items-center gap-2">
-              <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
-              <span>รูปแบบ: <strong>สอบข้อเขียน & สัมภาษณ์ประเมินมาตรฐาน</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
-              <span>กลุ่มเป้าหมาย: <strong>ตัวแทน จป. ของผู้รับเหมาและหน่วยงาน</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4 text-purple-600"></i>
-              <span>เอกสาร: <strong>วุฒิบัตรอบรม จป. + เอกสารแต่งตั้ง</strong></span>
-            </li>
-          </ul>
-        </div>
-
-        <a href="safety-officer/" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl text-center text-sm flex items-center justify-center gap-2 shadow transition-colors">
-          <span>เข้าสู่หน้าจองรอบสอบ จป.</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-      </div>
-
-      <!-- 4. อบรม E-PTW -->
-      <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-start mb-4">
-            <span class="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-              ระบบใบอนุญาตทำงาน
-            </span>
-            <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
-              <i data-lucide="laptop" class="w-6 h-6"></i>
-            </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">
+              อบรมทบทวนประจำปี & ทำบัตรผ่านเข้าพื้นที่[cite: 13]
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              สำหรับพนักงานและผู้รับเหมาเดิมที่มีบัตรผ่านอยู่แล้ว และต้องการต่ออายุบัตรประจำปี (รอบละ 30 คน)[cite: 13]
+            </p>
           </div>
 
-          <h3 class="text-lg font-bold text-slate-900 mb-2">อบรมระบบใบอนุญาตทำงานอิเล็กทรอนิกส์ (E-PTW)</h3>
-          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-            หลักสูตรฝึกอบรมการใช้งานระบบ Electronic Permit to Work สำหรับผู้ขออนุญาต ผู้ควบคุมงาน และผู้อนุมัติงาน
-          </p>
+          <hr class="border-slate-100">
 
-          <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
-            <li class="flex items-center gap-2">
-              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
-              <span>ระยะเวลา: <strong>รอบละ 2 ชั่วโมง (อบรม + ทดลองทำจริง)</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
-              <span>กลุ่มเป้าหมาย: <strong>Supervisor, วิศวกร และผู้เปิดใบงาน</strong></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-              <span>เงื่อนไข: <strong>ต้องมีบัญชีผู้ใช้งานระบบก่อนเข้าอบรม</strong></span>
-            </li>
-          </ul>
+          <div class="space-y-2 text-xs text-slate-600">
+            <div class="flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>[cite: 13]
+              <span>รอบเปิด: อังคาร, พุธ, ศุกร์ (14:00 - 17:00 น.)</span>[cite: 13]
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="calendar-range" class="w-4 h-4 text-blue-500"></i>
+              <span>ระยะเวลาโครงการ: <strong>1 พ.ย. - 31 ม.ค. ของทุกปี</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>[cite: 13]
+              <span>โควตา: จำกัด 30 คนต่อวัน</span>[cite: 13]
+            </div>
+            <div class="flex items-center gap-2" id="refresherPeriodNotice">
+              <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
+              <span class="text-slate-500" id="refresherNoticeText">กำลังตรวจสอบช่วงเวลาเปิดรับจอง...</span>
+            </div>
+          </div>
         </div>
 
-        <a href="e-ptw/" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-center text-sm flex items-center justify-center gap-2 shadow transition-colors">
-          <span>เข้าสู่หน้าจองรอบอบรม E-PTW</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
+        <div class="pt-6" id="refresherBtnContainer">
+          <!-- ปุ่มจะถูกปรับสถานะเปิด/ปิดรับจองด้วย JavaScript -->
+          <a href="refresher/" id="refresherBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-xl shadow transition-colors flex items-center justify-center gap-2 text-sm">
+            <span id="refresherBtnText">เข้าสู่หน้าจอง (อบรมทบทวน & ทำบัตร)</span>[cite: 13]
+            <i data-lucide="arrow-right" class="w-4 h-4" id="refresherBtnIcon"></i>[cite: 13]
+          </a>
+        </div>
       </div>
 
-    </div>
-
-    <!-- คำแนะนำ -->
-    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-950 flex items-start gap-3">
-      <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0"></i>
-      <div>
-        <strong>คำแนะนำ:</strong> กรุณาตรวจสอบคุณสมบัติและเตรียมเอกสารประกอบที่ระบุในแต่ละหลักสูตรให้ครบถ้วนก่อนยืนยันการจองรอบอบรม
-      </div>
     </div>
 
   </main>
 
-  <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-center">
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 text-center">
     <p>© 2026 ฝ่ายความปลอดภัย อาชีวอนามัย และสิ่งแวดล้อม (SHEQ Department)</p>
   </footer>
 
   <script>
-    lucide.createIcons();
+    // ตรวจสอบช่วงเวลาเปิดจองอบรมทบทวน (1 พ.ย. - 31 ม.ค. ของทุกปี)
+    function checkRefresherSeason() {
+      const now = new Date();
+      const month = now.getMonth(); // 0 = ม.ค., 10 = พ.ย., 11 = ธ.ค.
+
+      // เปิดรับจองเฉพาะ เดือน มกราคม (0), พฤศจิกายน (10), ธันวาคม (11)
+      const isOpenSeason = (month === 10 || month === 11 || month === 0);
+
+      const btn = document.getElementById("refresherBtn");
+      const btnText = document.getElementById("refresherBtnText");
+      const btnIcon = document.getElementById("refresherBtnIcon");
+      const badge = document.getElementById("refresherStatusBadge");
+      const noticeText = document.getElementById("refresherNoticeText");
+
+      if (isOpenSeason) {
+        // ช่วงเวลาเปิดรับจอง
+        badge.className = "text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+        badge.innerText = "เปิดรับจองขณะนี้";
+        noticeText.innerHTML = "<strong class='text-emerald-600'>เปิดรับจองอยู่ในขณะนี้</strong>";
+        btn.className = "w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-xl shadow transition-colors flex items-center justify-center gap-2 text-sm";
+        btnText.innerText = "เข้าสู่หน้าจอง (อบรมทบทวน & ทำบัตร)";
+        btn.href = "refresher/";
+      } else {
+        // นอกช่วงเวลา (1 ก.พ. - 31 ต.ค.)
+        badge.className = "text-xs font-semibold px-3 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-200";
+        badge.innerText = "ปิดรับจองชั่วคราว";
+        noticeText.innerHTML = "<span class='text-rose-600 font-semibold'>ปิดรับจอง (จะเปิดรอบถัดไป 1 พ.ย.)</span>";
+        btn.className = "w-full bg-slate-300 text-slate-500 font-bold py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2 text-sm shadow-none pointer-events-none";
+        btnText.innerText = "ปิดรับจอง (เปิด 1 พ.ย. ของทุกปี)";
+        btn.removeAttribute("href");
+        if (btnIcon) btnIcon.remove();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      checkRefresherSeason();
+      lucide.createIcons();
+    });
   </script>
 </body>
 </html>
