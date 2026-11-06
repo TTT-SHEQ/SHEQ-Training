@@ -29,7 +29,7 @@
         </div>
         <div>
           <h1 class="text-xl font-bold tracking-tight text-white">อบรมความปลอดภัยเบื้องต้นสำหรับผู้รับเหมาใหม่</h1>
-          <p class="text-xs text-slate-300">New Contractor Safety Induction (เฉพาะวันอังคาร และ วันพฤหัสบดี)</p>
+          <p class="text-xs text-slate-300">New Contractor Safety Induction (เปิดอบรมทั้งปี ทุกวันอังคาร และ พฤหัสบดี)</p>
         </div>
       </div>
       <a href="/SHEQ-Training/" class="text-xs text-blue-300 hover:text-white flex items-center gap-1.5 border border-slate-700 px-3.5 py-1.5 rounded-full bg-slate-800/80 transition-colors">
@@ -49,7 +49,7 @@
           ข้อกำหนดการเข้าอบรมสำหรับผู้รับเหมาใหม่
         </h2>
         <ul class="text-xs text-slate-600 list-disc list-inside space-y-0.5">
-          <li>เปิดรอบอบรมเฉพาะ <strong>วันอังคาร หรือ วันพฤหัสบดีเท่านั้น เวลา 09.00 น. - 12.00 น.</strong></li>
+          <li>เปิดรอบอบรมตลอดทั้งปี เฉพาะ <strong>วันอังคาร หรือ พฤหัสบดี เวลา 09.00 น. - 12.00 น. (3 ชั่วโมง)</strong></li>
           <li>จำกัดผู้เข้าอบรมรอบละ <strong>ไม่เกิน 25 คน/วัน</strong></li>
           <li>เอกสารแนบทุกฉบับต้องเป็นไฟล์ <strong>PDF หรือ ไฟล์รูปภาพ</strong> เท่านั้น (ขนาดไม่เกิน 5MB/ไฟล์)</li>
         </ul>
@@ -59,16 +59,30 @@
       </button>
     </div>
 
-    <!-- ส่วนที่ 1: เลือกรอบวันอบรม -->
+    <!-- ส่วนที่ 1: เลือกรอบวันอบรม (แบบเลือกเดือน) -->
     <section>
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-          <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">1</span>
-          วันที่ต้องการเข้าอบรม (รับไม่เกิน 25 คน/วัน)
-        </h3>
-        <span class="text-xs text-slate-500" id="seatStatusText">กำลังตรวจสอบที่นั่ง...</span>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold">1</span>
+            วันที่ต้องการเข้าอบรม (รับไม่เกิน 25 คน/วัน)
+          </h3>
+          <span class="text-xs text-slate-500" id="seatStatusText">กำลังตรวจสอบที่นั่ง...</span>
+        </div>
+
+        <!-- Dropdown เลือกเดือน -->
+        <div class="flex items-center gap-2">
+          <label for="monthFilter" class="text-xs font-semibold text-slate-700 whitespace-nowrap">เลือกเดือน:</label>
+          <div class="relative">
+            <select id="monthFilter" onchange="onMonthChange()" class="appearance-none bg-white border border-slate-300 rounded-lg px-3 py-2 pr-8 text-xs font-bold text-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+              <!-- รายชื่อเดือนจะถูกสร้างอัตโนมัติ -->
+            </select>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+        </div>
       </div>
 
+      <!-- กล่องแสดงรอบวันของเดือนที่เลือก -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="sessionsContainer"></div>
     </section>
 
@@ -249,32 +263,70 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCj-ZNfFyViOf5pdBkHyQ7C2EpfD_R1dDWPaGEL60fgkzkQAdAI0Z8vElvZaGCX-5v/exec";
     const MAX_SEATS_PER_DAY = 25;
 
-    let allAvailableSessions = [];
-    let visibleCount = 6;
     let bookedCounts = {};
+    let selectedYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth(); // 0 - 11
 
-    function generateContractorSessions() {
+    // รายชื่อเดือนภาษาไทย
+    const thaiMonths = [
+      "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+      "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
+
+    // สร้างตัวเลือกใน Dropdown เลือกเดือน (ล่วงหน้า 12 เดือน)
+    function initMonthSelector() {
+      const select = document.getElementById("monthFilter");
+      select.innerHTML = "";
+
+      const today = new Date();
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+        const y = d.getFullYear();
+        const m = d.getMonth();
+        const option = document.createElement("option");
+        option.value = `${y}-${m}`;
+        option.innerText = `${thaiMonths[m]} ${y + 543}`;
+        if (i === 0) option.selected = true;
+        select.appendChild(option);
+      }
+    }
+
+    function onMonthChange() {
+      const val = document.getElementById("monthFilter").value.split("-");
+      selectedYear = parseInt(val[0]);
+      selectedMonth = parseInt(val[1]);
+      renderSessions();
+    }
+
+    // คำนวณรอบวันเฉพาะ อังคาร (2) และ พฤหัสบดี (4) ของเดือนที่เลือก
+    function getSessionsForMonth(year, month) {
       const dates = [];
-      const d = new Date();
-      d.setHours(0, 0, 0, 0);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      while (dates.length < 18) {
-        d.setDate(d.getDate() + 1);
-        const day = d.getDay();
-        if (day === 2 || day === 4) { // อังคาร=2, พฤหัสบดี=4
-          const yyyy = d.getFullYear();
-          const mm = String(d.getMonth() + 1).padStart(2, '0');
-          const dd = String(d.getDate()).padStart(2, '0');
+      for (let day = 1; day <= daysInMonth; day++) {
+        const current = new Date(year, month, day);
+        const dayOfWeek = current.getDay();
+
+        // เอาเฉพาะวันอังคาร (2) หรือวันพฤหัสบดี (4)
+        if (dayOfWeek === 2 || dayOfWeek === 4) {
+          const yyyy = current.getFullYear();
+          const mm = String(current.getMonth() + 1).padStart(2, '0');
+          const dd = String(current.getDate()).padStart(2, '0');
           const dateStr = `${yyyy}-${mm}-${dd}`;
 
-          const thaiDate = d.toLocaleDateString('th-TH', {
+          const thaiDate = current.toLocaleDateString('th-TH', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
           });
 
-          dates.push({ dateStr, thaiDate, dayOfWeek: day });
+          // ตรวจสอบว่าเป็นวันที่ผ่านมาแล้วหรือไม่
+          const isPast = current < today;
+
+          dates.push({ dateStr, thaiDate, dayOfWeek, isPast });
         }
       }
       return dates;
@@ -303,19 +355,25 @@
       if (!container) return;
       container.innerHTML = "";
 
-      const currentSessions = allAvailableSessions.slice(0, visibleCount);
+      const sessions = getSessionsForMonth(selectedYear, selectedMonth);
 
-      currentSessions.forEach((session) => {
+      if (sessions.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-8 text-xs text-slate-400">ไม่มีรอบอบรมในเดือนนี้</div>`;
+        return;
+      }
+
+      sessions.forEach((session) => {
         const booked = bookedCounts[session.dateStr] || 0;
         const remaining = Math.max(0, MAX_SEATS_PER_DAY - booked);
         const isFull = remaining <= 0;
+        const isDisabled = isFull || session.isPast;
         const percent = Math.min(100, (booked / MAX_SEATS_PER_DAY) * 100);
 
         const card = document.createElement("div");
-        card.className = `p-4 rounded-xl border transition-all cursor-pointer relative ${
-          isFull 
+        card.className = `p-4 rounded-xl border transition-all relative ${
+          isDisabled
             ? 'bg-slate-100 border-slate-300 opacity-60 cursor-not-allowed'
-            : 'bg-white border-slate-200 hover:border-blue-500 hover:shadow-md'
+            : 'bg-white border-slate-200 hover:border-blue-500 hover:shadow-md cursor-pointer'
         }`;
         card.id = `card-${session.dateStr}`;
 
@@ -330,9 +388,10 @@
               <p class="font-bold text-sm text-slate-800 mt-1">${session.thaiDate}</p>
             </div>
             <span class="text-xs font-bold px-2 py-1 rounded ${
+              session.isPast ? 'bg-slate-200 text-slate-600' :
               isFull ? 'bg-rose-100 text-rose-700' : 'bg-blue-50 text-blue-700'
             }">
-              ${isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
+              ${session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
             </span>
           </div>
 
@@ -349,38 +408,14 @@
           </div>
         `;
 
-        if (!isFull) {
+        if (!isDisabled) {
           card.onclick = () => selectSession(session);
         }
 
         container.appendChild(card);
       });
 
-      let loadMoreBtn = document.getElementById("btnLoadMore");
-      if (!loadMoreBtn) {
-        const btnWrapper = document.createElement("div");
-        btnWrapper.className = "col-span-full flex justify-center pt-3";
-        btnWrapper.innerHTML = `
-          <button id="btnLoadMore" onclick="loadMoreSessions()" class="text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 px-5 py-2.5 rounded-lg shadow-sm flex items-center gap-2">
-            <i data-lucide="chevron-down" class="w-4 h-4"></i> ดูรอบวันถัดไป (+6 วัน)
-          </button>
-        `;
-        container.parentNode.appendChild(btnWrapper);
-        loadMoreBtn = document.getElementById("btnLoadMore");
-      }
-
-      if (visibleCount >= allAvailableSessions.length) {
-        if (loadMoreBtn && loadMoreBtn.parentElement) loadMoreBtn.parentElement.style.display = "none";
-      } else {
-        if (loadMoreBtn && loadMoreBtn.parentElement) loadMoreBtn.parentElement.style.display = "flex";
-      }
-
       lucide.createIcons();
-    }
-
-    function loadMoreSessions() {
-      visibleCount += 6;
-      renderSessions();
     }
 
     function selectSession(session) {
@@ -390,10 +425,14 @@
       badge.classList.remove("hidden");
       badge.innerText = `รอบที่เลือก: ${session.thaiDate}`;
 
-      allAvailableSessions.forEach(s => {
-        const c = document.getElementById(`card-${s.dateStr}`);
-        if (c) c.classList.toggle("ring-2", s.dateStr === session.dateStr);
-      });
+      // เคลียร์กรอบที่เลือกเก่า แล้วใส่กรอบสีน้ำเงินรอบใหม่
+      const cards = document.querySelectorAll("#sessionsContainer > div");
+      cards.forEach(c => c.classList.remove("ring-2", "ring-blue-500", "bg-blue-50/40"));
+
+      const activeCard = document.getElementById(`card-${session.dateStr}`);
+      if (activeCard) {
+        activeCard.classList.add("ring-2", "ring-blue-500", "bg-blue-50/40");
+      }
 
       document.getElementById("formSection").scrollIntoView({ behavior: 'smooth' });
     }
@@ -491,8 +530,7 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      allAvailableSessions = generateContractorSessions();
+      initMonthSelector();
       renderSessions();
       fetchBookings();
     });
