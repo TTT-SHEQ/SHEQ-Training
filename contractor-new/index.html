@@ -131,11 +131,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ชื่อ-นามสกุล <span class="text-rose-500">*</span></label>
-            <input type="text" id="fullName" required placeholder="นายสมศักดิ์ สุจริต" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <input type="text" id="fullName" required placeholder="นายเซฟตี้ ความปลอดภัย" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">เลขประจำตัวประชาชน <span class="text-rose-500">*</span></label>
-            <input type="text" id="idCard" required maxlength="13" placeholder="1100000000000" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">เลขประจำตัวประชาชน / Passport <span class="text-rose-500">*</span></label>
+            <input type="text" id="idCard" required placeholder="1100000000000 หรือ เลข Passport" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">เบอร์โทรศัพท์ <span class="text-rose-500">*</span></label>
@@ -188,7 +188,7 @@
                 3. สำเนาบัตรประจำตัวประชาชน <span class="text-rose-500">*</span>
               </label>
               <p class="text-[11px] text-slate-500 mb-2">พร้อมเซ็นต์สำเนาถูกต้อง</p>
-              <input type="file" id="fileIdCard" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+              <input type="file" id="fileIdCard" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
             <!-- K: ประกันสังคม ม.33 + ลิงก์ดูตัวอย่างเอกสาร -->
@@ -202,7 +202,7 @@
                 </a>
               </div>
               <p class="text-[11px] text-slate-500 mb-2">ม.33 เท่านั้น (สปส. 1-03 / e-Service)</p>
-              <input type="file" id="fileSocialSec" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+              <input type="file" id="fileSocialSec" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
             <!-- L: อบรม 6 ชม. ตามกฎหมาย -->
@@ -211,7 +211,7 @@
                 5. เอกสารใบรับรองการอบรม 6 ชั่วโมง <span class="text-rose-500">*</span>
               </label>
               <p class="text-[11px] text-slate-500 mb-2">จากทางบริษัทฯ ตามกฎหมาย</p>
-              <input type="file" id="fileCert6H" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer">
+              <input type="file" id="fileCert6H" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
             <!-- M: ใบรับรองแพทย์ขับขี่ -->
@@ -220,7 +220,7 @@
                 6. ไฟล์ใบรับรองแพทย์ตรวจสุขภาพและขับขี่ <span class="text-amber-700 font-normal">(เฉพาะพนักงานขับรถที่ใช้ในพื้นที่หวงห้ามเท่านั้น)</span>
               </label>
               <p class="text-[11px] text-slate-500 mb-2">ระบุว่าผู้ขับขี่มีสุขภาพร่างกายแข็งแรงและสามารถขับขี่ยานพาหนะได้</p>
-              <input type="file" id="fileMedical" accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-900 hover:file:bg-amber-200 cursor-pointer">
+              <input type="file" id="fileMedical" accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
           </div>
@@ -272,7 +272,7 @@
           <div class="space-y-1">
             <span class="text-xs text-slate-400">ผู้เข้ารับการอบรม:</span>
             <p class="text-sm font-bold text-slate-800" id="passName">-</p>
-            <p class="text-xs text-slate-600">เลขบัตร ปชช.: <span id="passIdCard">-</span></p>
+            <p class="text-xs text-slate-600">เลขบัตร ปชช. / Passport: <span id="passIdCard">-</span></p>
             <p class="text-xs text-slate-600">เบอร์โทร: <span id="passPhone">-</span></p>
             <p class="text-xs text-slate-600">บริษัท: <span id="passCompany">-</span></p>
           </div>
@@ -287,7 +287,7 @@
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-900 flex items-start gap-2">
           <i data-lucide="info" class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"></i>
           <div>
-            <strong>ข้อปฏิบัติ:</strong> โปรดแต่งกายสุภาพ สวมรองเท้าเซฟตี้ และนำเอกสารฉบับจริงพร้อมบัตรประจำตัวประชาชนมาแสดงต่อเจ้าหน้าที่
+            <strong>ข้อปฏิบัติ:</strong> โปรดแต่งกายสุภาพ สวมรองเท้าเซฟตี้ และนำเอกสารฉบับจริงพร้อมบัตรประจำตัวประชาชน/Passport มาแสดงต่อเจ้าหน้าที่
           </div>
         </div>
       </div>
@@ -549,7 +549,7 @@
           body: JSON.stringify(payload)
         });
 
-        // กำหนดค่าลงใบนัดหมาย
+        // กรอกข้อมูลลงใบนัดหมาย
         document.getElementById("passBookingId").innerText = `#${bookingId}`;
         document.getElementById("passName").innerText = payload.fullName;
         document.getElementById("passIdCard").innerText = payload.idCard;
@@ -557,7 +557,7 @@
         document.getElementById("passCompany").innerText = payload.company;
         document.getElementById("passDate").innerText = selectedDate;
 
-        // ซ่อนส่วนอื่นๆ แล้วแสดงเฉพาะใบนัดหมาย
+        // ซ่อนฟอร์มและปฏิทิน แล้วแสดงเฉพาะใบนัดหมาย
         document.getElementById("sessionsSection").classList.add("hidden");
         document.getElementById("formSection").classList.add("hidden");
         document.getElementById("alertBanner").classList.add("hidden");
