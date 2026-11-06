@@ -90,8 +90,8 @@
 
       <!-- เครื่องมือค้นหา และตัวกรองเลือกเดือน -->
       <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full lg:w-auto">
-        <!-- ตัวกรองเดือน -->
-        <div class="relative w-full sm:w-48">
+        <!-- ตัวกรองเดือน (ค่าเริ่มต้นเป็นเดือนปัจจุบัน) -->
+        <div class="relative w-full sm:w-52">
           <select id="monthFilter" onchange="filterTable()" class="appearance-none w-full bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-2 text-xs font-semibold text-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
             <option value="">ทุกเดือน (ทั้งหมด)</option>
           </select>
@@ -182,7 +182,6 @@
         errorMsg.classList.add("hidden");
         loadData();
       } else {
-        errorMsg.classList.add("hidden");
         errorMsg.classList.remove("hidden");
         document.getElementById("adminPasswordInput").value = "";
       }
@@ -222,16 +221,23 @@
       loadData();
     }
 
-    // ฟังก์ชันสร้างตัวเลือกใน Dropdown เดือน โดยอ่านจากข้อมูลจริงที่มีการจองเข้ามา
+    // ฟังก์ชันสร้าง Dropdown และกำหนดให้เป็นเดือนปัจจุบันเป็นค่าเริ่มต้น
     function populateMonthDropdown(rows) {
       const select = document.getElementById("monthFilter");
-      const currentSelected = select.value;
-      select.innerHTML = '<option value="">ทุกเดือน (ทั้งหมด)</option>';
+      
+      // ดึงเดือนและปีปัจจุบันตามเครื่อง (YYYY-MM)
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonthStr = String(now.getMonth() + 1).padStart(2, '0');
+      const currentYM = `${currentYear}-${currentMonthStr}`;
 
       const monthSet = new Set();
 
+      // บังคับให้มีเดือนปัจจุบันอยู่ในรายการเสมอ
+      monthSet.add(currentYM);
+
+      // ดึงเดือนอื่นที่มีข้อมูลในชีตเข้ามาร่วมด้วย
       rows.forEach(row => {
-        // ค้นหาคอลัมน์ที่เป็นวันที่ (เช่น YYYY-MM-DD หรือ Timestamp)
         Object.entries(row).forEach(([key, val]) => {
           const str = String(val).trim();
           const matchIso = str.match(/^(\d{4})-(\d{2})-\d{2}/);
@@ -241,8 +247,10 @@
         });
       });
 
-      // จัดเรียงจากเดือนล่าสุดไปหาอดีต
+      // จัดเรียงเดือนจากล่าสุดไปเก่าสุด
       const sortedMonths = Array.from(monthSet).sort().reverse();
+
+      select.innerHTML = '<option value="">ทุกเดือน (ทั้งหมด)</option>';
 
       sortedMonths.forEach(ym => {
         const [year, monthStr] = ym.split("-");
@@ -251,7 +259,11 @@
         const opt = document.createElement("option");
         opt.value = ym;
         opt.innerText = `${thaiMonths[mIdx]} ${yTh}`;
-        if (ym === currentSelected) opt.selected = true;
+
+        // ตั้งค่าเริ่มต้นเป็นเดือนปัจจุบัน
+        if (ym === currentYM) {
+          opt.selected = true;
+        }
         select.appendChild(opt);
       });
     }
@@ -292,7 +304,7 @@
 
       if (!headers || headers.length === 0 || rows.length === 0) {
         thead.innerHTML = "";
-        tbody.innerHTML = `<tr><td class="text-center py-10 text-slate-400 font-medium">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>`;
+        tbody.innerHTML = `<tr><td class="text-center py-10 text-slate-400 font-medium">ไม่พบข้อมูลตามเงื่อนไขที่เลือกในเดือนนี้</td></tr>`;
         return;
       }
 
@@ -329,7 +341,6 @@
       lucide.createIcons();
     }
 
-    // กรองข้อมูลทั้งจากคำค้นหา และเดือนที่เลือก
     function filterTable() {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       const selectedMonth = document.getElementById("monthFilter").value; // รูปแบบ YYYY-MM
