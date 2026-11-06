@@ -21,10 +21,12 @@
           <p class="text-xs text-slate-300">ระบบลงทะเบียนอบรมและขอรับบัตรผ่านเข้าพื้นที่ปฏิบัติงาน</p>
         </div>
       </div>
-      <div class="text-xs bg-slate-800/80 border border-slate-700 px-4 py-2 rounded-full text-slate-300 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        ระบบเปิดให้บริการตามรอบที่กำหนด
-      </div>
+
+      <!-- ปุ่มเข้าสู่ระบบ Admin แทนที่แถบสถานะเดิม -->
+      <a href="admin/" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 px-4 py-2 rounded-full text-slate-300 hover:text-white flex items-center gap-2 transition-all shadow-sm">
+        <i data-lucide="lock" class="w-3.5 h-3.5 text-rose-400"></i>
+        <span>สำหรับเจ้าหน้าที่ (Admin)</span>
+      </a>
     </div>
   </header>
 
@@ -95,7 +97,7 @@
         </div>
       </div>
 
-      <!-- Card 2: อบรมทบทวนประจำปี & ทำบัตรผ่านเข้าพื้นที่ (เปิด 1 พ.ย. - 31 ม.ค.) -->
+      <!-- Card 2: อบรมทบทวนประจำปี & ทำบัตรผ่านเข้าพื้นที่ -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative">
         <div class="space-y-4">
           <div class="flex justify-between items-start">
@@ -146,7 +148,7 @@
         </div>
       </div>
 
-      <!-- Card 3: ระบบใบอนุญาตทำงาน (E-PTW) -->
+      <!-- Card 3: อบรม E-PTW -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative">
         <div class="space-y-4">
           <div class="flex justify-between items-start">
@@ -172,11 +174,11 @@
           <div class="space-y-2 text-xs text-slate-600">
             <div class="flex items-center gap-2">
               <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
-              <span>รอบเปิด: ทุกวันจันทร์ และ พุธ</span>
+              <span>รอบเปิด: <strong>ทุกวันจันทร์ (09.00 - 12.00 น.)</strong></span>
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
-              <span>ระยะเวลา: 2 ชั่วโมง (13:30 - 15:30 น.)</span>
+              <span>ระยะเวลา: 3 ชั่วโมง</span>
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
@@ -184,7 +186,7 @@
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
-              <span>กลุ่มเป้าหมาย: ผู้ขออนุญาต / ผู้ควบคุมงาน</span>
+              <span>เงื่อนไข: พนักงานที่ถือบัตรพนักงาน TTT</span>
             </div>
           </div>
         </div>
@@ -197,7 +199,7 @@
         </div>
       </div>
 
-      <!-- Card 4: เจ้าหน้าที่ความปลอดภัย (Safety Officer) -->
+      <!-- Card 4: Safety Officer -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-shadow relative">
         <div class="space-y-4">
           <div class="flex justify-between items-start">
@@ -211,10 +213,10 @@
 
           <div>
             <h3 class="text-lg font-bold text-slate-900 mb-1">
-              ขึ้นทะเบียนเจ้าหน้าที่ความปลอดภัย (Safety Officer)
+              จองสอบขึ้นทะเบียนเจ้าหน้าที่ความปลอดภัย (Safety Officer)
             </h3>
             <p class="text-xs text-slate-500 leading-relaxed">
-              ยื่นเอกสารคุณสมบัติและลงทะเบียนทดสอบความรู้ความปลอดภัยเฉพาะด้านสำหรับ จป. ประจำโครงการ
+              ขอสอบขึ้นทะเบียนเจ้าหน้าที่ความปลอดภัยในการทำงานของ บริษัท ไทยแท้งค์ เทอร์มินัล จำกัด
             </p>
           </div>
 
@@ -223,11 +225,11 @@
           <div class="space-y-2 text-xs text-slate-600">
             <div class="flex items-center gap-2">
               <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
-              <span>รอบเปิด: ทุกวันศุกร์สุดท้ายของเดือน</span>
+              <span>รอบเปิด: <strong>ทุกวันศุกร์ (09.00 - 12.00 น.)</strong></span>
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
-              <span>ระยะเวลา: 4 ชั่วโมง (09:00 - 13:00 น.)</span>
+              <span>ระยะเวลา: 3 ชั่วโมง</span>
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
@@ -235,14 +237,14 @@
             </div>
             <div class="flex items-center gap-2">
               <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
-              <span>เอกสาร: ใบอนุญาต จป. / วุฒิการศึกษา</span>
+              <span>เอกสาร: หนังสือแต่งตั้ง / ทะเบียน / ใบรับรอง จป.</span>
             </div>
           </div>
         </div>
 
         <div class="pt-6">
           <a href="safety-officer/" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow transition-colors flex items-center justify-center gap-2 text-sm">
-            <span>เข้าสู่หน้าลงทะเบียน (Safety Officer)</span>
+            <span>เข้าสู่หน้าจองสอบ (Safety Officer)</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>
@@ -263,7 +265,6 @@
       const now = new Date();
       const month = now.getMonth(); // 0 = ม.ค., 10 = พ.ย., 11 = ธ.ค.
 
-      // เปิดรับจองเฉพาะ เดือน มกราคม (0), พฤศจิกายน (10), ธันวาคม (11)
       const isOpenSeason = (month === 10 || month === 11 || month === 0);
 
       const btn = document.getElementById("refresherBtn");
