@@ -351,6 +351,10 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
+      // กำหนดวันเริ่มต้นเปิดให้จอง (วันที่ 19 พฤศจิกายน 2569)
+      const openingDate = new Date(2026, 10, 19); // เดือน 10 คือ พฤศจิกายน
+      openingDate.setHours(0, 0, 0, 0);
+
       for (let day = 1; day <= daysInMonth; day++) {
         const current = new Date(year, month, day);
         const dayOfWeek = current.getDay();
@@ -368,8 +372,10 @@
             day: 'numeric'
           });
 
-          const isPast = current < today;
-          dates.push({ dateStr, thaiDate, dayOfWeek, isPast });
+          const isBeforeOpening = current < openingDate;
+          const isPast = current < today || isBeforeOpening;
+
+          dates.push({ dateStr, thaiDate, dayOfWeek, isPast, isBeforeOpening });
         }
       }
       return dates;
@@ -406,10 +412,14 @@
       }
 
       sessions.forEach((session) => {
-        const booked = bookedCounts[session.dateStr] || 0;
+        let booked = bookedCounts[session.dateStr] || 0;
+        if (session.isBeforeOpening) {
+          booked = MAX_SEATS_PER_DAY;
+        }
+
         const remaining = Math.max(0, MAX_SEATS_PER_DAY - booked);
         const isFull = remaining <= 0;
-        const isDisabled = isFull || session.isPast;
+        const isDisabled = isFull || (session.isPast && !session.isBeforeOpening);
         const percent = Math.min(100, (booked / MAX_SEATS_PER_DAY) * 100);
 
         const card = document.createElement("div");
@@ -431,10 +441,11 @@
               <p class="font-bold text-sm text-slate-800 mt-1">${session.thaiDate}</p>
             </div>
             <span class="text-xs font-bold px-2 py-1 rounded ${
+              session.isBeforeOpening ? 'bg-slate-200 text-slate-600' :
               session.isPast ? 'bg-slate-200 text-slate-600' :
               isFull ? 'bg-rose-100 text-rose-700' : 'bg-blue-50 text-blue-700'
             }">
-              ${session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
+              ${session.isBeforeOpening ? 'เต็มแล้ว' : session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
             </span>
           </div>
 
@@ -548,7 +559,6 @@
           body: JSON.stringify(payload)
         });
 
-        // กำหนดค่าลงใบนัดหมาย (แปลงวันที่เป็นภาษาไทยเต็ม)
         document.getElementById("passBookingId").innerText = `#${bookingId}`;
         document.getElementById("passName").innerText = payload.fullName;
         document.getElementById("passIdCard").innerText = payload.idCard;
