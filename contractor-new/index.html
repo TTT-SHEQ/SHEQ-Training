@@ -18,7 +18,7 @@
         padding: 0 !important;
         height: auto !important;
       }
-      header, footer, #alertBanner, #formSection, .no-print {
+      header, footer, #alertBanner, #formSection, #sessionsSection, .no-print {
         display: none !important;
       }
       #successModal {
@@ -44,7 +44,6 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
 
-  <!-- Header -->
   <header class="bg-slate-900 text-white border-b-4 border-blue-500 shadow-md">
     <div class="max-w-5xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
@@ -65,10 +64,8 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
     
-    <!-- Banner ข้อกำหนด -->
     <div id="alertBanner" class="bg-white rounded-xl p-5 border-l-4 border-blue-500 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
       <div class="space-y-1">
         <h2 class="font-bold text-slate-800 flex items-center gap-2">
@@ -86,7 +83,7 @@
       </button>
     </div>
 
-    <!-- ส่วนที่ 1: เลือกรอบวันอบรม (แบบเลือกเดือน) -->
+    <!-- ส่วนที่ 1: เลือกรอบวันอบรม -->
     <section id="sessionsSection">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
@@ -97,7 +94,6 @@
           <span class="text-xs text-slate-500" id="seatStatusText">กำลังตรวจสอบที่นั่ง...</span>
         </div>
 
-        <!-- Dropdown เลือกเดือน -->
         <div class="flex items-center gap-2">
           <label for="monthFilter" class="text-xs font-semibold text-slate-700 whitespace-nowrap">เลือกเดือน:</label>
           <div class="relative">
@@ -108,11 +104,10 @@
         </div>
       </div>
 
-      <!-- กล่องแสดงรอบวันของเดือนที่เลือก -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="sessionsContainer"></div>
     </section>
 
-    <!-- ส่วนที่ 2: ฟอร์มกรอกข้อมูลและแนบเอกสาร -->
+    <!-- ส่วนที่ 2: ฟอร์มข้อมูลและแนบเอกสาร -->
     <section id="formSection" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
         <h3 class="font-bold text-slate-800 flex items-center gap-2">
@@ -127,7 +122,6 @@
       <form id="bookingForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-6">
         <input type="hidden" id="selectedSessionDate" required>
 
-        <!-- ข้อมูลผู้สมัคร (C, D, E, F) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ชื่อ-นามสกุล <span class="text-rose-500">*</span></label>
@@ -149,7 +143,6 @@
 
         <hr class="border-slate-200">
 
-        <!-- เอกสารแนบ (H, I, J, K, L, M) -->
         <div>
           <h4 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-1.5">
             <i data-lucide="paperclip" class="w-4 h-4 text-slate-500"></i>
@@ -159,7 +152,6 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             
-            <!-- H: ใบคำร้องขอบัตรผ่านบุคคล + ลิงก์ดาวน์โหลดแบบฟอร์ม -->
             <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50 hover:bg-slate-50 transition-colors">
               <div class="flex items-start justify-between gap-2 mb-1">
                 <label class="block text-xs font-semibold text-slate-800">
@@ -173,7 +165,6 @@
               <input type="file" id="filePassForm" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
-            <!-- I: รูปถ่ายหน้าตรง -->
             <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50 hover:bg-slate-50 transition-colors">
               <label class="block text-xs font-semibold text-slate-800 mb-1">
                 2. รูปถ่ายหน้าตรง (พื้นหลังสุภาพ) <span class="text-rose-500">*</span>
@@ -182,7 +173,6 @@
               <input type="file" id="filePhoto" required accept="image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
-            <!-- J: สำเนาบัตรประจำตัวประชาชน -->
             <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50 hover:bg-slate-50 transition-colors">
               <label class="block text-xs font-semibold text-slate-800 mb-1">
                 3. สำเนาบัตรประจำตัวประชาชน <span class="text-rose-500">*</span>
@@ -191,7 +181,6 @@
               <input type="file" id="fileIdCard" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
-            <!-- K: ประกันสังคม ม.33 + ลิงก์ดูตัวอย่างเอกสาร -->
             <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50 hover:bg-slate-50 transition-colors">
               <div class="flex items-start justify-between gap-2 mb-1">
                 <label class="block text-xs font-semibold text-slate-800">
@@ -205,7 +194,6 @@
               <input type="file" id="fileSocialSec" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
-            <!-- L: อบรม 6 ชม. ตามกฎหมาย -->
             <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50 hover:bg-slate-50 transition-colors md:col-span-2">
               <label class="block text-xs font-semibold text-slate-800 mb-1">
                 5. เอกสารใบรับรองการอบรม 6 ชั่วโมง <span class="text-rose-500">*</span>
@@ -214,7 +202,6 @@
               <input type="file" id="fileCert6H" required accept=".pdf,image/*" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-900 hover:file:bg-blue-200 cursor-pointer">
             </div>
 
-            <!-- M: ใบรับรองแพทย์ขับขี่ -->
             <div class="border border-dashed border-amber-300 rounded-lg p-3.5 bg-amber-50/40 md:col-span-2">
               <label class="block text-xs font-semibold text-slate-800 mb-1">
                 6. ไฟล์ใบรับรองแพทย์ตรวจสุขภาพและขับขี่ <span class="text-amber-700 font-normal">(เฉพาะพนักงานขับรถที่ใช้ในพื้นที่หวงห้ามเท่านั้น)</span>
@@ -226,7 +213,6 @@
           </div>
         </div>
 
-        <!-- ปุ่มยืนยัน -->
         <div class="pt-2">
           <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50">
             <i data-lucide="check-circle-2" class="w-5 h-5"></i>
@@ -239,7 +225,6 @@
     <!-- ใบนัดหมายเมื่อจองสำเร็จ -->
     <div id="successModal" class="hidden space-y-6">
       
-      <!-- แถบแจ้งเตือนสำเร็จ -->
       <div class="no-print bg-emerald-500 text-white rounded-xl p-4 shadow-md flex items-center gap-3">
         <div class="bg-white/20 p-2 rounded-lg">
           <i data-lucide="check-circle" class="w-6 h-6"></i>
@@ -250,7 +235,6 @@
         </div>
       </div>
 
-      <!-- ตัวใบนัดหมาย (พิมพ์พอดี 1 หน้า) -->
       <div id="printablePass" class="border-2 border-dashed border-slate-300 rounded-2xl p-6 bg-slate-50 shadow-sm">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-2">
           <div class="flex items-center gap-3">
@@ -292,7 +276,6 @@
         </div>
       </div>
 
-      <!-- ปุ่มดำเนินการ -->
       <div class="no-print flex flex-col sm:flex-row gap-3 justify-end">
         <button onclick="window.print()" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 px-5 rounded-lg text-sm transition-colors shadow">
           <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์ใบนัดหมาย
@@ -321,6 +304,22 @@
       "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
       "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
+
+    // แปลง YYYY-MM-DD เป็น วัน...ที่ ... เดือน... พ.ศ. ....
+    function formatThaiFullDate(dateStr) {
+      if (!dateStr) return "-";
+      var parts = dateStr.split("-");
+      var year = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10) - 1;
+      var day = parseInt(parts[2], 10);
+      var d = new Date(year, month, day);
+      return d.toLocaleDateString("th-TH", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
 
     function initMonthSelector() {
       const select = document.getElementById("monthFilter");
@@ -549,22 +548,20 @@
           body: JSON.stringify(payload)
         });
 
-        // กรอกข้อมูลลงใบนัดหมาย
+        // กำหนดค่าลงใบนัดหมาย (แปลงวันที่เป็นภาษาไทยเต็ม)
         document.getElementById("passBookingId").innerText = `#${bookingId}`;
         document.getElementById("passName").innerText = payload.fullName;
         document.getElementById("passIdCard").innerText = payload.idCard;
         document.getElementById("passPhone").innerText = payload.phone;
         document.getElementById("passCompany").innerText = payload.company;
-        document.getElementById("passDate").innerText = selectedDate;
+        document.getElementById("passDate").innerText = formatThaiFullDate(selectedDate);
 
-        // ซ่อนฟอร์มและปฏิทิน แล้วแสดงเฉพาะใบนัดหมาย
         document.getElementById("sessionsSection").classList.add("hidden");
         document.getElementById("formSection").classList.add("hidden");
         document.getElementById("alertBanner").classList.add("hidden");
         document.getElementById("successModal").classList.remove("hidden");
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // โหลดนับที่นั่งใหม่
         fetchBookings();
 
       } catch (err) {
