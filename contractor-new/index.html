@@ -372,6 +372,7 @@
             day: 'numeric'
           });
 
+          // เช็คเงื่อนไขว่าเป็นวันก่อน 19 พ.ย. 2569 หรือไม่
           const isBeforeOpening = current < openingDate;
           const isPast = current < today || isBeforeOpening;
 
@@ -413,13 +414,16 @@
 
       sessions.forEach((session) => {
         let booked = bookedCounts[session.dateStr] || 0;
+        
+        // ถ้าเป็นวันก่อน 19 พ.ย. ให้บังคับยอดจองเต็มเท่ากับ MAX_SEATS
         if (session.isBeforeOpening) {
           booked = MAX_SEATS_PER_DAY;
         }
 
         const remaining = Math.max(0, MAX_SEATS_PER_DAY - booked);
         const isFull = remaining <= 0;
-        const isDisabled = isFull || (session.isPast && !session.isBeforeOpening);
+        // ปิดการคลิกถ้าเป็นวันก่อนวันที่ 19 พ.ย. หรือผ่านมาแล้ว หรือเต็ม
+        const isDisabled = session.isBeforeOpening || isFull || session.isPast;
         const percent = Math.min(100, (booked / MAX_SEATS_PER_DAY) * 100);
 
         const card = document.createElement("div");
