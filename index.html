@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ระบบลงทะเบียนอบรมความปลอดภัย SHEQ Training Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
 
   <!-- Header -->
   <header class="bg-slate-900 text-white border-b-4 border-amber-500 shadow-md">
-    <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center space-x-3.5">
         <div class="bg-amber-500 text-slate-950 p-2.5 rounded-xl shadow">
           <i data-lucide="shield-check" class="w-8 h-8"></i>
@@ -29,24 +30,25 @@
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-5xl mx-auto px-4 py-10 flex-1 w-full space-y-8">
+  <main class="max-w-6xl mx-auto px-4 py-10 flex-1 w-full space-y-8">
     
+    <!-- กล่องหัวข้อ -->
     <div class="text-center max-w-2xl mx-auto space-y-2">
-      <h2 class="text-2xl font-extrabold text-slate-900">กรุณาเลือกหลักสูตรที่ต้องการเข้าอบรม</h2>
-      <p class="text-sm text-slate-600">เลือกประเภทการอบรมให้ตรงกับสถานะของท่าน เพื่อเข้าสู่หน้าเลือกรอบวันและแนบเอกสาร</p>
+      <h2 class="text-2xl font-extrabold text-slate-900">กรุณาเลือกหลักสูตรที่ต้องการเข้าอบรม / สอบ</h2>
+      <p class="text-sm text-slate-600">เลือกประเภทการอบรมให้ตรงกับข้อกำหนดของท่าน เพื่อเข้าสู่หน้ารายละเอียดและรอบการจอง</p>
     </div>
 
-    <!-- การ์ด 2 หลักสูตร -->
+    <!-- กริดแสดง 4 หลักสูตร (2x2 บนคอมพิวเตอร์) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- หลักสูตรที่ 1: ผู้รับเหมาใหม่ -->
+      <!-- 1. ผู้รับเหมาใหม่ -->
       <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-blue-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
         <div>
           <div class="flex justify-between items-start mb-4">
             <span class="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
               สำหรับผู้รับเหมาใหม่
             </span>
-            <div class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+            <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
               <i data-lucide="user-plus" class="w-6 h-6"></i>
             </div>
           </div>
@@ -58,16 +60,16 @@
 
           <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
             <li class="flex items-center gap-2">
-              <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
-              <span>ระยะเวลาอบรม: <strong>1 วันเต็ม (09:00 - 16:30 น.)</strong></span>
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+              <span>ระยะเวลา: <strong>1 วันเต็ม (09:00 - 16:30 น.)</strong></span>
             </li>
             <li class="flex items-center gap-2">
-              <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
               <span>กลุ่มเป้าหมาย: <strong>ผู้ปฏิบัติงานใหม่ทุกท่าน</strong></span>
             </li>
             <li class="flex items-center gap-2">
-              <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
-              <span>เงื่อนไข: <strong>ต้องผ่านการอบรมก่อนเริ่มงาน 100%</strong></span>
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+              <span>เงื่อนไข: <strong>ต้องผ่านก่อนขอรับบัตรเข้าพื้นที่</strong></span>
             </li>
           </ul>
         </div>
@@ -78,14 +80,14 @@
         </a>
       </div>
 
-      <!-- หลักสูตรที่ 2: อบรมทบทวนประจำปี (ชี้ไปที่โฟลเดอร์ refresher/) -->
+      <!-- 2. อบรมทบทวนประจำปี & ทำบัตรผ่าน -->
       <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-amber-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
         <div>
           <div class="flex justify-between items-start mb-4">
             <span class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-900 rounded-full">
               ต่ออายุบัตรประจำปี
             </span>
-            <div class="p-2 bg-amber-50 text-amber-600 rounded-xl">
+            <div class="p-2.5 bg-amber-50 text-amber-600 rounded-xl">
               <i data-lucide="refresh-cw" class="w-6 h-6"></i>
             </div>
           </div>
@@ -97,16 +99,16 @@
 
           <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
             <li class="flex items-center gap-2">
-              <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
-              <span>รอบเปิด: <strong>วันอังคาร, พุธ, ศุกร์ (14:00 - 17:00 น.)</strong></span>
+              <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+              <span>รอบเปิด: <strong>อังคาร, พุธ, ศุกร์ (14:00 - 17:00 น.)</strong></span>
             </li>
             <li class="flex items-center gap-2">
-              <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
               <span>ระยะเวลาโครงการ: <strong>1 พ.ย. 69 - 31 ม.ค. 70</strong></span>
             </li>
             <li class="flex items-center gap-2">
-              <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
-              <span>ความจุ: <strong>จำกัด 30 คนต่อวัน</strong></span>
+              <i data-lucide="users" class="w-4 h-4 text-amber-600"></i>
+              <span>โควตา: <strong>จำกัด 30 คนต่อวัน</strong></span>
             </li>
           </ul>
         </div>
@@ -117,16 +119,102 @@
         </a>
       </div>
 
+      <!-- 3. สอบขึ้นทะเบียน จป. -->
+      <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-purple-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs font-bold px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
+              เจ้าหน้าที่ความปลอดภัย
+            </span>
+            <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
+              <i data-lucide="award" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <h3 class="text-lg font-bold text-slate-900 mb-2">สอบขึ้นทะเบียน จป. (Safety Officer Exam)</h3>
+          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+            จองคิวสอบวัดความรู้เพื่อขึ้นทะเบียน จป.หัวหน้างาน / จป.บริหาร / จป.วิชาชีพ ประจำสถานประกอบการ
+          </p>
+
+          <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
+            <li class="flex items-center gap-2">
+              <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+              <span>รูปแบบ: <strong>สอบข้อเขียน & สัมภาษณ์ประเมินมาตรฐาน</strong></span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+              <span>กลุ่มเป้าหมาย: <strong>ตัวแทน จป. ของผู้รับเหมาและหน่วยงาน</strong></span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-purple-600"></i>
+              <span>เอกสาร: <strong>วุฒิบัตรอบรม จป. + เอกสารแต่งตั้ง</strong></span>
+            </li>
+          </ul>
+        </div>
+
+        <a href="safety-officer/" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl text-center text-sm flex items-center justify-center gap-2 shadow transition-colors">
+          <span>เข้าสู่หน้าจองรอบสอบ จป.</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 4. อบรม E-PTW -->
+      <div class="bg-white rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:shadow-xl transition-all p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
+              ระบบใบอนุญาตทำงาน
+            </span>
+            <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+              <i data-lucide="laptop" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <h3 class="text-lg font-bold text-slate-900 mb-2">อบรมระบบใบอนุญาตทำงานอิเล็กทรอนิกส์ (E-PTW)</h3>
+          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+            หลักสูตรฝึกอบรมการใช้งานระบบ Electronic Permit to Work สำหรับผู้ขออนุญาต ผู้ควบคุมงาน และผู้อนุมัติงาน
+          </p>
+
+          <ul class="text-xs text-slate-600 space-y-2 mb-6 border-t border-slate-100 pt-4">
+            <li class="flex items-center gap-2">
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+              <span>ระยะเวลา: <strong>รอบละ 2 ชั่วโมง (อบรม + ทดลองทำจริง)</strong></span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+              <span>กลุ่มเป้าหมาย: <strong>Supervisor, วิศวกร และผู้เปิดใบงาน</strong></span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+              <span>เงื่อนไข: <strong>ต้องมีบัญชีผู้ใช้งานระบบก่อนเข้าอบรม</strong></span>
+            </li>
+          </ul>
+        </div>
+
+        <a href="e-ptw/" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-center text-sm flex items-center justify-center gap-2 shadow transition-colors">
+          <span>เข้าสู่หน้าจองรอบอบรม E-PTW</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
     </div>
 
-    <!-- ข้อแนะนำ -->
+    <!-- คำแนะนำ -->
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-950 flex items-start gap-3">
       <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0"></i>
       <div>
-        <strong>คำแนะนำ:</strong> กรุณาเตรียมไฟล์เอกสาร (เช่น สำเนาบัตรประชาชน, รูปถ่ายหน้าตรง, ใบรับรองแพทย์) ให้พร้อมก่อนเริ่มกรอกแบบฟอร์มในขั้นตอนถัดไป
+        <strong>คำแนะนำ:</strong> กรุณาตรวจสอบคุณสมบัติและเตรียมเอกสารประกอบที่ระบุในแต่ละหลักสูตรให้ครบถ้วนก่อนยืนยันการจองรอบอบรม
       </div>
     </div>
 
   </main>
 
-  <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-
+  <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-center">
+    <p>© 2026 ฝ่ายความปลอดภัย อาชีวอนามัย และสิ่งแวดล้อม (SHEQ Department)</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
