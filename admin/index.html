@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบตรวจสอบรายชื่อผู้เข้าอบรม (Admin) - SHEQ Portal</title>
+  <title>ระบบจัดการการอบรม (Admin) - SHEQ Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -17,7 +17,7 @@
           <i data-lucide="lock" class="w-6 h-6"></i>
         </div>
         <h2 class="text-xl font-bold text-slate-900">พื้นที่เฉพาะเจ้าหน้าที่ (Admin)</h2>
-        <p class="text-xs text-slate-500">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบตรวจสอบข้อมูลการจอง</p>
+        <p class="text-xs text-slate-500">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบจัดการข้อมูล</p>
       </div>
 
       <form onsubmit="handleLogin(event)" class="space-y-4">
@@ -56,7 +56,7 @@
         </div>
         <div>
           <h1 class="text-lg font-bold tracking-tight text-white">SHEQ Training Admin Dashboard</h1>
-          <p class="text-xs text-slate-300">ระบบตรวจสอบรายชื่อผู้ลงทะเบียนและเอกสารแนบ</p>
+          <p class="text-xs text-slate-300">ระบบตรวจสอบรายชื่อผู้ลงทะเบียนและจัดการวันเปิด-ปิดรอบ</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -70,9 +70,18 @@
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- แถบเลือกหลักสูตรและตัวกรอง -->
+    <!-- แท็บสลับโหมด: ตารางรายชื่อ vs จัดการวันเปิด-ปิดรอบ -->
+    <div class="flex border-b border-slate-200 gap-4">
+      <button onclick="switchView('data')" id="tabViewData" class="pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2">
+        <i data-lucide="table" class="w-4 h-4"></i> รายชื่อผู้ลงทะเบียน
+      </button>
+      <button onclick="switchView('schedule')" id="tabViewSchedule" class="pb-3 text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2">
+        <i data-lucide="calendar-x-2" class="w-4 h-4"></i> จัดการเปิด-ปิดรอบอบรม
+      </button>
+    </div>
+
+    <!-- แถบเลือกหลักสูตร -->
     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-      <!-- ปุ่มเลือกหลักสูตร -->
       <div class="flex flex-wrap gap-2">
         <button onclick="switchCourse('contractor-new')" id="btn-contractor-new" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold transition-colors bg-blue-600 text-white shadow-sm flex items-center gap-1.5">
           <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> ผู้รับเหมาใหม่
@@ -92,14 +101,13 @@
       <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full lg:w-auto">
         <!-- ตัวกรองเดือน (ค่าเริ่มต้นเป็นเดือนปัจจุบัน) -->
         <div class="relative w-full sm:w-52">
-          <select id="monthFilter" onchange="filterTable()" class="appearance-none w-full bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-2 text-xs font-semibold text-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
-            <option value="">ทุกเดือน (ทั้งหมด)</option>
+          <select id="monthFilter" onchange="onMonthChange()" class="appearance-none w-full bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-2 text-xs font-semibold text-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
           </select>
           <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
         </div>
 
-        <!-- ช่องค้นหา -->
-        <div class="relative w-full sm:w-56">
+        <!-- ช่องค้นหา (แสดงเฉพาะตอนอยู่หน้าตารางรายชื่อ) -->
+        <div id="searchBoxContainer" class="relative w-full sm:w-56">
           <input type="text" id="searchInput" oninput="filterTable()" placeholder="ค้นหาชื่อ, รหัส, บริษัท..." class="w-full text-xs border border-slate-300 rounded-lg pl-8 pr-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
         </div>
@@ -111,8 +119,8 @@
       </div>
     </div>
 
-    <!-- ส่วนแสดงตารางข้อมูล -->
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <!-- ส่วนที่ 1: ตารางแสดงข้อมูลผู้จอง -->
+    <div id="viewSectionData" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
@@ -134,6 +142,26 @@
       </div>
     </div>
 
+    <!-- ส่วนที่ 2: จัดการเปิด-ปิดรอบอบรม -->
+    <div id="viewSectionSchedule" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+            กำหนดวันเปิด-ปิดรอบประจำเดือน
+          </h3>
+          <p class="text-xs text-slate-500">หากปิดรอบ วันนั้นจะถูกล็อกไม่ให้ผู้ใช้งานภายนอกกดลงทะเบียนได้ทันที</p>
+        </div>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200" id="scheduleCourseBadge">
+          หลักสูตร: ผู้รับเหมาใหม่
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-2" id="scheduleCardsContainer">
+        <!-- การ์ดวันเปิด/ปิด จะถูกสร้างผ่าน JS -->
+      </div>
+    </div>
+
   </main>
 
   <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-center">
@@ -145,8 +173,13 @@
     const ADMIN_PASSWORD = "ttt@sheq2026";
 
     let currentCourse = "contractor-new";
+    let currentView = "data"; // 'data' หรือ 'schedule'
     let cachedRows = [];
     let cachedHeaders = [];
+    let closedDates = [];
+
+    let selectedYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth();
 
     const courseTitles = {
       "contractor-new": "อบรมความปลอดภัยเบื้องต้นสำหรับผู้รับเหมาใหม่",
@@ -165,6 +198,7 @@
       const modal = document.getElementById("loginModal");
       if (isAuth) {
         modal.classList.add("hidden");
+        initMonthDropdown();
         loadData();
       } else {
         modal.classList.remove("hidden");
@@ -180,6 +214,7 @@
         sessionStorage.setItem("adminAuth", "true");
         document.getElementById("loginModal").classList.add("hidden");
         errorMsg.classList.add("hidden");
+        initMonthDropdown();
         loadData();
       } else {
         errorMsg.classList.remove("hidden");
@@ -205,9 +240,36 @@
       lucide.createIcons();
     }
 
+    function switchView(view) {
+      currentView = view;
+      const tabData = document.getElementById("tabViewData");
+      const tabSchedule = document.getElementById("tabViewSchedule");
+      const secData = document.getElementById("viewSectionData");
+      const secSchedule = document.getElementById("viewSectionSchedule");
+      const searchBox = document.getElementById("searchBoxContainer");
+
+      if (view === "data") {
+        tabData.className = "pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2";
+        tabSchedule.className = "pb-3 text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2";
+        secData.classList.remove("hidden");
+        secSchedule.classList.add("hidden");
+        searchBox.classList.remove("hidden");
+        filterTable();
+      } else {
+        tabSchedule.className = "pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2";
+        tabData.className = "pb-3 text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2";
+        secSchedule.classList.remove("hidden");
+        secData.classList.add("hidden");
+        searchBox.classList.add("hidden");
+        renderScheduleManager();
+      }
+      lucide.createIcons();
+    }
+
     function switchCourse(courseKey) {
       currentCourse = courseKey;
       document.getElementById("currentCourseTitle").innerText = courseTitles[courseKey];
+      document.getElementById("scheduleCourseBadge").innerText = `หลักสูตร: ${courseTitles[courseKey]}`;
       document.getElementById("searchInput").value = "";
 
       document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -221,57 +283,48 @@
       loadData();
     }
 
-    // ฟังก์ชันสร้าง Dropdown และกำหนดให้เป็นเดือนปัจจุบันเป็นค่าเริ่มต้น
-    function populateMonthDropdown(rows) {
+    // สร้างตัวเลือกเดือนโดยเริ่มต้นที่เดือนปัจจุบัน
+    function initMonthDropdown() {
       const select = document.getElementById("monthFilter");
-      
-      // ดึงเดือนและปีปัจจุบันตามเครื่อง (YYYY-MM)
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonthStr = String(now.getMonth() + 1).padStart(2, '0');
-      const currentYM = `${currentYear}-${currentMonthStr}`;
-
-      const monthSet = new Set();
-
-      // บังคับให้มีเดือนปัจจุบันอยู่ในรายการเสมอ
-      monthSet.add(currentYM);
-
-      // ดึงเดือนอื่นที่มีข้อมูลในชีตเข้ามาร่วมด้วย
-      rows.forEach(row => {
-        Object.entries(row).forEach(([key, val]) => {
-          const str = String(val).trim();
-          const matchIso = str.match(/^(\d{4})-(\d{2})-\d{2}/);
-          if (matchIso) {
-            monthSet.add(`${matchIso[1]}-${matchIso[2]}`);
-          }
-        });
-      });
-
-      // จัดเรียงเดือนจากล่าสุดไปเก่าสุด
-      const sortedMonths = Array.from(monthSet).sort().reverse();
-
       select.innerHTML = '<option value="">ทุกเดือน (ทั้งหมด)</option>';
 
-      sortedMonths.forEach(ym => {
-        const [year, monthStr] = ym.split("-");
-        const mIdx = parseInt(monthStr, 10) - 1;
-        const yTh = parseInt(year, 10) + 543;
-        const opt = document.createElement("option");
-        opt.value = ym;
-        opt.innerText = `${thaiMonths[mIdx]} ${yTh}`;
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = now.getMonth();
 
-        // ตั้งค่าเริ่มต้นเป็นเดือนปัจจุบัน
-        if (ym === currentYM) {
+      for (let i = -2; i <= 6; i++) {
+        const d = new Date(curYear, curMonth + i, 1);
+        const y = d.getFullYear();
+        const m = d.getMonth();
+        const val = `${y}-${String(m + 1).padStart(2, '0')}`;
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.innerText = `${thaiMonths[m]} ${y + 543}`;
+        if (i === 0) {
           opt.selected = true;
+          selectedYear = y;
+          selectedMonth = m;
         }
         select.appendChild(opt);
-      });
+      }
+    }
+
+    function onMonthChange() {
+      const val = document.getElementById("monthFilter").value;
+      if (val) {
+        const parts = val.split("-");
+        selectedYear = parseInt(parts[0]);
+        selectedMonth = parseInt(parts[1]) - 1;
+      }
+      if (currentView === "data") {
+        filterTable();
+      } else {
+        renderScheduleManager();
+      }
     }
 
     async function loadData() {
-      const thead = document.getElementById("tableHead");
       const tbody = document.getElementById("tableBody");
-      const rowCount = document.getElementById("rowCount");
       const icon = document.getElementById("tableRefreshIcon");
 
       if (icon) icon.classList.add("animate-spin");
@@ -284,14 +337,15 @@
         if (result.status === "success") {
           cachedHeaders = result.headers || [];
           cachedRows = result.rows || [];
-          populateMonthDropdown(cachedRows);
+          closedDates = result.closedDates || [];
           filterTable();
+          if (currentView === "schedule") {
+            renderScheduleManager();
+          }
         } else {
-          thead.innerHTML = "";
           tbody.innerHTML = `<tr><td colspan="12" class="text-center py-10 text-rose-500 font-semibold">${result.message}</td></tr>`;
         }
       } catch (err) {
-        thead.innerHTML = "";
         tbody.innerHTML = `<tr><td colspan="12" class="text-center py-10 text-rose-500 font-semibold">ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาลองใหม่อีกครั้ง</td></tr>`;
       } finally {
         if (icon) icon.classList.remove("animate-spin");
@@ -308,7 +362,6 @@
         return;
       }
 
-      // วาดหัวตาราง
       let thHTML = "<tr>";
       headers.forEach(h => {
         thHTML += `<th class="px-4 py-3 whitespace-nowrap bg-slate-100">${h}</th>`;
@@ -316,14 +369,11 @@
       thHTML += "</tr>";
       thead.innerHTML = thHTML;
 
-      // วาดแถวข้อมูล
       let tbHTML = "";
       rows.forEach((row) => {
         tbHTML += `<tr class="hover:bg-slate-50 transition-colors">`;
         headers.forEach(h => {
           let val = row[h] || "-";
-
-          // แปลงลิงก์ Google Drive ให้เป็นปุ่มกด
           if (String(val).startsWith("http")) {
             val = `<a href="${val}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-md font-medium border border-blue-200 transition-colors">
               <i data-lucide="file-text" class="w-3.5 h-3.5"></i> เปิดไฟล์
@@ -331,7 +381,6 @@
           } else if (h.toLowerCase().includes("id") || h.includes("รหัส")) {
             val = `<span class="font-mono font-bold text-slate-900">${val}</span>`;
           }
-
           tbHTML += `<td class="px-4 py-3 whitespace-nowrap">${val}</td>`;
         });
         tbHTML += `</tr>`;
@@ -343,18 +392,16 @@
 
     function filterTable() {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
-      const selectedMonth = document.getElementById("monthFilter").value; // รูปแบบ YYYY-MM
+      const selectedMonthVal = document.getElementById("monthFilter").value;
 
       let filtered = cachedRows;
 
-      // 1. กรองตามเดือนที่เลือก
-      if (selectedMonth) {
+      if (selectedMonthVal) {
         filtered = filtered.filter(row => {
-          return Object.values(row).some(v => String(v).includes(selectedMonth));
+          return Object.values(row).some(v => String(v).includes(selectedMonthVal));
         });
       }
 
-      // 2. กรองตามคำค้นหา
       if (q) {
         filtered = filtered.filter(row => {
           return Object.values(row).some(v => String(v).toLowerCase().includes(q));
@@ -363,6 +410,126 @@
 
       document.getElementById("rowCount").innerText = filtered.length;
       renderTable(cachedHeaders, filtered);
+    }
+
+    // คำนวณวันอบรมของแต่ละหลักสูตร
+    function getCourseSessions(year, month) {
+      const dates = [];
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        const dayOfWeek = d.getDay();
+
+        let isSession = false;
+        let dayName = "";
+
+        if (currentCourse === "contractor-new" && (dayOfWeek === 2 || dayOfWeek === 4)) {
+          isSession = true;
+          dayName = dayOfWeek === 2 ? "วันอังคาร" : "วันพฤหัสบดี";
+        } else if (currentCourse === "refresher" && (dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 5)) {
+          isSession = true;
+          dayName = dayOfWeek === 2 ? "วันอังคาร" : dayOfWeek === 3 ? "วันพุธ" : "วันศุกร์";
+        } else if (currentCourse === "safety-officer" && dayOfWeek === 5) {
+          isSession = true;
+          dayName = "วันศุกร์";
+        } else if (currentCourse === "e-ptw" && dayOfWeek === 1) {
+          isSession = true;
+          dayName = "วันจันทร์";
+        }
+
+        if (isSession) {
+          const yyyy = d.getFullYear();
+          const mm = String(d.getMonth() + 1).padStart(2, '0');
+          const dd = String(d.getDate()).padStart(2, '0');
+          const dateStr = `${yyyy}-${mm}-${dd}`;
+          const thaiDate = `${dayName}ที่ ${day} ${thaiMonths[month]} ${year + 543}`;
+          dates.push({ dateStr, thaiDate, dayName });
+        }
+      }
+      return dates;
+    }
+
+    // เรนเดอร์การ์ดจัดการเปิด-ปิดวันอบรม
+    function renderScheduleManager() {
+      const container = document.getElementById("scheduleCardsContainer");
+      container.innerHTML = "";
+
+      const sessions = getCourseSessions(selectedYear, selectedMonth);
+
+      if (sessions.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400">ไม่มีรอบอบรมในเดือนที่เลือก</div>`;
+        return;
+      }
+
+      sessions.forEach(sess => {
+        const isClosed = closedDates.includes(sess.dateStr);
+
+        const card = document.createElement("div");
+        card.className = `p-4 rounded-xl border transition-all ${
+          isClosed ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded ${isClosed ? 'bg-rose-200 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                ${isClosed ? 'งดรอบอบรม (ปิดรับ)' : 'เปิดรับจองตามปกติ'}
+              </span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1.5">${sess.thaiDate}</h4>
+              <p class="text-[11px] text-slate-400 font-mono">${sess.dateStr}</p>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200/60 mt-3 flex justify-end">
+            <button onclick="toggleDateStatus('${sess.dateStr}', ${isClosed})" class="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+              isClosed ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'
+            }">
+              <i data-lucide="${isClosed ? 'check' : 'x'}" class="w-3.5 h-3.5"></i>
+              ${isClosed ? 'คลิกเพื่อเปิดรอบ' : 'คลิกเพื่อปิดรอบ'}
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    // ส่งคำสั่งเปิด/ปิดรอบไปบันทึกผ่าน Apps Script
+    async function toggleDateStatus(dateStr, currentlyClosed) {
+      const newStatus = currentlyClosed ? "open" : "closed";
+      const confirmMsg = currentlyClosed 
+        ? `ต้องการ "เปิดรับจอง" รอบวันที่ ${dateStr} ใช่หรือไม่?`
+        : `ต้องการ "สั่งปิดงดรอบ" วันที่ ${dateStr} ใช่หรือไม่?\n(ผู้สมัครจะไม่สามารถเลือกวันนี้ได้)`;
+
+      if (!confirm(confirmMsg)) return;
+
+      try {
+        if (currentlyClosed) {
+          closedDates = closedDates.filter(d => d !== dateStr);
+        } else {
+          closedDates.push(dateStr);
+        }
+        renderScheduleManager();
+
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({
+            action: "toggleClosedDate",
+            courseType: currentCourse,
+            sessionDate: dateStr,
+            status: newStatus
+          })
+        });
+
+      } catch (err) {
+        alert("เกิดข้อผิดพลาดในการบันทึกสถานะ กรุณาลองใหม่อีกครั้ง");
+        loadData();
+      }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
