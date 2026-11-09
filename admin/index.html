@@ -9,7 +9,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
 
-  <!-- Modal ล็อคอินรหัสผ่านก่อนเข้าใช้งาน -->
+  <!-- 1. Modal ล็อคอินรหัสผ่าน -->
   <div id="loginModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 border border-slate-200">
       <div class="text-center space-y-2">
@@ -41,6 +41,28 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 2. Custom Confirmation Modal เด้งกลางหน้าจอแบบสวยงาม -->
+  <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-slate-200 transform transition-all scale-100 animate-in fade-in zoom-in duration-150">
+      <div class="text-center space-y-2">
+        <div id="confirmIconContainer" class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto shadow-inner bg-rose-100 text-rose-600">
+          <i data-lucide="alert-triangle" id="confirmIcon" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-900" id="confirmTitle">ยืนยันการทำรายการ</h3>
+        <p class="text-xs text-slate-500 leading-relaxed" id="confirmMessage">ข้อความรายละเอียด</p>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeConfirmModal(false)" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs transition-colors">
+          ยกเลิก
+        </button>
+        <button type="button" id="confirmOkBtn" onclick="closeConfirmModal(true)" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow transition-colors flex items-center justify-center gap-1.5">
+          ยืนยัน
+        </button>
+      </div>
     </div>
   </div>
 
@@ -99,20 +121,17 @@
 
       <!-- เครื่องมือค้นหา และตัวกรองเลือกเดือน -->
       <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full lg:w-auto">
-        <!-- ตัวกรองเดือน (ค่าเริ่มต้นเป็นเดือนปัจจุบัน) -->
         <div class="relative w-full sm:w-52">
           <select id="monthFilter" onchange="onMonthChange()" class="appearance-none w-full bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-2 text-xs font-semibold text-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
           </select>
           <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
         </div>
 
-        <!-- ช่องค้นหา (แสดงเฉพาะตอนอยู่หน้าตารางรายชื่อ) -->
         <div id="searchBoxContainer" class="relative w-full sm:w-56">
           <input type="text" id="searchInput" oninput="filterTable()" placeholder="ค้นหาชื่อ, รหัส, บริษัท..." class="w-full text-xs border border-slate-300 rounded-lg pl-8 pr-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
         </div>
 
-        <!-- ปุ่มรีเฟรช -->
         <button onclick="loadData()" class="p-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-700 transition-colors shrink-0" title="รีเฟรชข้อมูล">
           <i data-lucide="refresh-cw" id="tableRefreshIcon" class="w-4 h-4"></i>
         </button>
@@ -158,7 +177,6 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-2" id="scheduleCardsContainer">
-        <!-- การ์ดวันเปิด/ปิด จะถูกสร้างผ่าน JS -->
       </div>
     </div>
 
@@ -173,7 +191,7 @@
     const ADMIN_PASSWORD = "ttt@sheq2026";
 
     let currentCourse = "contractor-new";
-    let currentView = "data"; // 'data' หรือ 'schedule'
+    let currentView = "data";
     let cachedRows = [];
     let cachedHeaders = [];
     let closedDates = [];
@@ -192,6 +210,48 @@
       "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
       "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
+
+    // ตัวแปร Callback สำหรับ Custom Confirm Modal
+    let confirmResolve = null;
+
+    function showCustomConfirm({ title, message, isClosing }) {
+      return new Promise((resolve) => {
+        confirmResolve = resolve;
+
+        const modal = document.getElementById("confirmModal");
+        const titleEl = document.getElementById("confirmTitle");
+        const msgEl = document.getElementById("confirmMessage");
+        const iconContainer = document.getElementById("confirmIconContainer");
+        const icon = document.getElementById("confirmIcon");
+        const okBtn = document.getElementById("confirmOkBtn");
+
+        titleEl.innerText = title;
+        msgEl.innerHTML = message;
+
+        if (isClosing) {
+          iconContainer.className = "w-12 h-12 rounded-2xl flex items-center justify-center mx-auto shadow-inner bg-rose-100 text-rose-600";
+          icon.setAttribute("data-lucide", "alert-triangle");
+          okBtn.className = "w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow transition-colors flex items-center justify-center gap-1.5";
+          okBtn.innerText = "ยืนยันการปิดรอบ";
+        } else {
+          iconContainer.className = "w-12 h-12 rounded-2xl flex items-center justify-center mx-auto shadow-inner bg-emerald-100 text-emerald-600";
+          icon.setAttribute("data-lucide", "check-circle-2");
+          okBtn.className = "w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow transition-colors flex items-center justify-center gap-1.5";
+          okBtn.innerText = "ยืนยันการเปิดรอบ";
+        }
+
+        modal.classList.remove("hidden");
+        lucide.createIcons();
+      });
+    }
+
+    function closeConfirmModal(result) {
+      document.getElementById("confirmModal").classList.add("hidden");
+      if (confirmResolve) {
+        confirmResolve(result);
+        confirmResolve = null;
+      }
+    }
 
     function checkAuth() {
       const isAuth = sessionStorage.getItem("adminAuth") === "true";
@@ -283,7 +343,6 @@
       loadData();
     }
 
-    // สร้างตัวเลือกเดือนโดยเริ่มต้นที่เดือนปัจจุบัน
     function initMonthDropdown() {
       const select = document.getElementById("monthFilter");
       select.innerHTML = '<option value="">ทุกเดือน (ทั้งหมด)</option>';
@@ -412,7 +471,6 @@
       renderTable(cachedHeaders, filtered);
     }
 
-    // คำนวณวันอบรมของแต่ละหลักสูตร
     function getCourseSessions(year, month) {
       const dates = [];
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -450,7 +508,6 @@
       return dates;
     }
 
-    // เรนเดอร์การ์ดจัดการเปิด-ปิดวันอบรม
     function renderScheduleManager() {
       const container = document.getElementById("scheduleCardsContainer");
       container.innerHTML = "";
@@ -497,14 +554,17 @@
       lucide.createIcons();
     }
 
-    // ส่งคำสั่งเปิด/ปิดรอบไปบันทึกผ่าน Apps Script
+    // ฟังก์ชันเปิด-ปิดรอบ ที่เปลี่ยนมาใช้ Custom Modal กึ่งกลางหน้าจอ
     async function toggleDateStatus(dateStr, currentlyClosed) {
-      const newStatus = currentlyClosed ? "open" : "closed";
-      const confirmMsg = currentlyClosed 
-        ? `ต้องการ "เปิดรับจอง" รอบวันที่ ${dateStr} ใช่หรือไม่?`
-        : `ต้องการ "สั่งปิดงดรอบ" วันที่ ${dateStr} ใช่หรือไม่?\n(ผู้สมัครจะไม่สามารถเลือกวันนี้ได้)`;
+      const isClosing = !currentlyClosed;
+      const title = isClosing ? "ยืนยันการปิดงดรอบอบรม" : "ยืนยันการเปิดรับจองรอบอบรม";
+      const message = isClosing
+        ? `ต้องการ <strong>"สั่งปิดงดรอบ"</strong> วันที่ <span class="text-rose-600 font-mono font-bold">${dateStr}</span> ใช่หรือไม่?<br><span class="text-slate-400 text-[11px]">(ผู้สมัครจะไม่สามารถเลือกลงทะเบียนวันนี้ได้)</span>`
+        : `ต้องการ <strong>"เปิดรับจอง"</strong> รอบวันที่ <span class="text-emerald-600 font-mono font-bold">${dateStr}</span> ใช่หรือไม่?`;
 
-      if (!confirm(confirmMsg)) return;
+      // แสดง Popup กลางจอและรอการกด ยืนยัน/ยกเลิก
+      const userConfirmed = await showCustomConfirm({ title, message, isClosing });
+      if (!userConfirmed) return;
 
       try {
         if (currentlyClosed) {
@@ -522,7 +582,7 @@
             action: "toggleClosedDate",
             courseType: currentCourse,
             sessionDate: dateStr,
-            status: newStatus
+            status: isClosing ? "closed" : "open"
           })
         });
 
