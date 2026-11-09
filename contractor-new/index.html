@@ -297,7 +297,7 @@
     const MAX_SEATS_PER_DAY = 25;
 
     let bookedCounts = {};
-    let closedDates = []; // รายการวันที่ Admin ปิดรับจอง
+    let closedDates = []; // รายการวันที่ Admin สั่งปิด
     let selectedYear = new Date().getFullYear();
     let selectedMonth = new Date().getMonth();
 
@@ -306,7 +306,6 @@
       "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
 
-    // แปลง YYYY-MM-DD เป็น วัน...ที่ ... เดือน... พ.ศ. ....
     function formatThaiFullDate(dateStr) {
       if (!dateStr) return "-";
       var parts = dateStr.split("-");
@@ -352,10 +351,6 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // กำหนดวันเริ่มต้นเปิดให้จอง (วันที่ 19 พฤศจิกายน 2569)
-      const openingDate = new Date(2026, 10, 19);
-      openingDate.setHours(0, 0, 0, 0);
-
       for (let day = 1; day <= daysInMonth; day++) {
         const current = new Date(year, month, day);
         const dayOfWeek = current.getDay();
@@ -373,10 +368,10 @@
             day: 'numeric'
           });
 
-          const isBeforeOpening = current < openingDate;
-          const isPast = current < today || isBeforeOpening;
+          // ตรวจสอบเฉพาะวันที่ผ่านมาแล้วตามเวลาจริง
+          const isPast = current < today;
 
-          dates.push({ dateStr, thaiDate, dayOfWeek, isPast, isBeforeOpening });
+          dates.push({ dateStr, thaiDate, dayOfWeek, isPast });
         }
       }
       return dates;
@@ -391,7 +386,7 @@
         const response = await fetch(`${SCRIPT_URL}?course=contractor-new`);
         const result = await response.json();
         if (result && result.counts) bookedCounts = result.counts;
-        if (result && result.closedDates) closedDates = result.closedDates; // รับรายการวันที่ Admin สั่งปิด
+        if (result && result.closedDates) closedDates = result.closedDates;
         if (statusText) statusText.innerText = "ข้อมูลที่นั่งเป็นปัจจุบัน";
       } catch (err) {
         if (statusText) statusText.innerText = "แสดงผลรอบเปิดรับจอง";
@@ -414,21 +409,15 @@
       }
 
       sessions.forEach((session) => {
-        let booked = bookedCounts[session.dateStr] || 0;
-        
-        // ถ้าเป็นวันก่อน 19 พ.ย. ให้แสดงยอดเต็ม
-        if (session.isBeforeOpening) {
-          booked = MAX_SEATS_PER_DAY;
-        }
-
+        const booked = bookedCounts[session.dateStr] || 0;
         const remaining = Math.max(0, MAX_SEATS_PER_DAY - booked);
         const isFull = remaining <= 0;
         
         // เช็คว่า Admin สั่งปิดรอบนี้หรือไม่
         const isClosedByAdmin = closedDates.includes(session.dateStr);
 
-        // ปิดการคลิกถ้าเป็นวันก่อนเปิดรอบ, ผ่านมาแล้ว, เต็ม หรือ Admin สั่งงดรอบ
-        const isDisabled = session.isBeforeOpening || isFull || session.isPast || isClosedByAdmin;
+        // ปิดรับจองเฉพาะ: เต็มจริง, วันที่ผ่านมาแล้ว หรือ Admin สั่งงดรอบ
+        const isDisabled = isFull || session.isPast || isClosedByAdmin;
         const percent = Math.min(100, (booked / MAX_SEATS_PER_DAY) * 100);
 
         const card = document.createElement("div");
@@ -451,11 +440,10 @@
             </div>
             <span class="text-xs font-bold px-2 py-1 rounded ${
               isClosedByAdmin ? 'bg-rose-100 text-rose-700' :
-              session.isBeforeOpening ? 'bg-slate-200 text-slate-600' :
               session.isPast ? 'bg-slate-200 text-slate-600' :
               isFull ? 'bg-rose-100 text-rose-700' : 'bg-blue-50 text-blue-700'
             }">
-              ${isClosedByAdmin ? 'งดรอบอบรม' : session.isBeforeOpening ? 'เต็มแล้ว' : session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
+              ${isClosedByAdmin ? 'งดรอบอบรม' : session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
             </span>
           </div>
 
