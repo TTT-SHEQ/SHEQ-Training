@@ -244,6 +244,7 @@
     const MAX_SEATS_PER_DAY = 20;
 
     let bookedCounts = {};
+    let closedDates = []; // รายการวันที่ Admin ปิดรับจอง
     let selectedYear = new Date().getFullYear();
     let selectedMonth = new Date().getMonth();
 
@@ -330,6 +331,7 @@
         const response = await fetch(`${SCRIPT_URL}?course=e-ptw`);
         const result = await response.json();
         if (result && result.counts) bookedCounts = result.counts;
+        if (result && result.closedDates) closedDates = result.closedDates; // รับรายการวันที่สั่งปิด
         if (statusText) statusText.innerText = "ข้อมูลที่นั่งเป็นปัจจุบัน";
       } catch (err) {
         if (statusText) statusText.innerText = "แสดงผลรอบเปิดรับจอง";
@@ -355,7 +357,10 @@
         const booked = bookedCounts[session.dateStr] || 0;
         const remaining = Math.max(0, MAX_SEATS_PER_DAY - booked);
         const isFull = remaining <= 0;
-        const isDisabled = isFull || session.isPast;
+        
+        // เช็คว่า Admin สั่งงดรอบหรือไม่
+        const isClosedByAdmin = closedDates.includes(session.dateStr);
+        const isDisabled = isFull || session.isPast || isClosedByAdmin;
         const percent = Math.min(100, (booked / MAX_SEATS_PER_DAY) * 100);
 
         const card = document.createElement("div");
@@ -375,10 +380,11 @@
               <p class="font-bold text-sm text-slate-800 mt-1">${session.thaiDate}</p>
             </div>
             <span class="text-xs font-bold px-2 py-1 rounded ${
+              isClosedByAdmin ? 'bg-rose-100 text-rose-700' :
               session.isPast ? 'bg-slate-200 text-slate-600' :
               isFull ? 'bg-rose-100 text-rose-700' : 'bg-purple-50 text-purple-700'
             }">
-              ${session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
+              ${isClosedByAdmin ? 'งดรอบอบรม' : session.isPast ? 'ผ่านมาแล้ว' : isFull ? 'เต็มแล้ว' : `ว่าง ${remaining} ที่`}
             </span>
           </div>
 
@@ -387,10 +393,10 @@
           </div>
 
           <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-            <div class="${isFull ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-purple-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
+            <div class="${isClosedByAdmin ? 'bg-slate-400' : isFull ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-purple-500'} h-1.5 rounded-full" style="width: ${isClosedByAdmin ? 100 : percent}%"></div>
           </div>
           <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-            <span>ลงทะเบียนแล้ว ${booked} คน</span>
+            <span>${isClosedByAdmin ? 'ปิดรับจองโดยเจ้าหน้าที่' : `ลงทะเบียนแล้ว ${booked} คน`}</span>
             <span>จำกัด ${MAX_SEATS_PER_DAY} คน</span>
           </div>
         `;
