@@ -30,11 +30,18 @@
         </div>
       </div>
 
-      <!-- ปุ่มเข้าสู่ระบบ Admin -->
-      <a href="admin/" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 px-4 py-2 rounded-full text-slate-300 hover:text-white flex items-center gap-2 transition-all shadow-sm shrink-0">
-        <i data-lucide="lock" class="w-3.5 h-3.5 text-rose-400"></i>
-        <span>สำหรับเจ้าหน้าที่ (Admin)</span>
-      </a>
+      <!-- ปุ่มเมนูฝั่งขวา: ตรวจสอบรายชื่อ + Admin -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5">
+        <a href="status/" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-full flex items-center gap-2 transition-all shadow-sm shrink-0">
+          <i data-lucide="user-check" class="w-4 h-4"></i>
+          <span>ตรวจสอบรายชื่อผู้ลงทะเบียน</span>
+        </a>
+
+        <a href="admin/" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 px-4 py-2 rounded-full text-slate-300 hover:text-white flex items-center gap-2 transition-all shadow-sm shrink-0">
+          <i data-lucide="lock" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span>สำหรับเจ้าหน้าที่ (Admin)</span>
+        </a>
+      </div>
     </div>
   </header>
 
